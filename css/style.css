@@ -4,14 +4,6 @@
     box-sizing: border-box;
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    position: fixed;
-    touch-action: none;
-}
-
 body {
     display: flex;
     justify-content: center;
@@ -20,44 +12,42 @@ body {
     font-family: Arial, sans-serif;
 }
 
-#game-container {
-    position: fixed;
-    top: 0;
-    left: 0;
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+  
+  #game-container {
+    position: relative;   /* 🔥 VERY IMPORTANT */
     width: 100vw;
     height: 100vh;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
-#game-container canvas {
-    display: block;
+    background: black;
+  }
+  
+  /* Phaser canvas */
+  #game-container canvas {
     width: 100% !important;
     height: 100% !important;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-/* Overlay Styles */
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    display: block;
+  }
+  
+  /* Overlays */
+  .overlay {
+    position: absolute;   /* 🔥 NOT fixed */
+    inset: 0;
+    z-index: 10;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
-    pointer-events: auto;
-}
-
-.overlay.hidden {
+    background: rgba(0,0,0,0.7);
+  }
+  
+  .overlay.hidden {
     display: none;
-}
+  }
+  
 
 /* Menu Content */
 .menu-content,

@@ -10,29 +10,31 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <div id="game-container"></div>
+    <div id="game-container">
 
-    <!-- Menu Screen Overlay -->
-    <div id="menu-overlay" class="overlay">
-      <div class="menu-content">
-        <h1 class="game-title">Endless Runner</h1>
-        <p class="instructions">Tap or Click to Jump!</p>
-        <button id="start-btn" class="btn btn-primary">START</button>
-        <div id="high-score-menu" class="high-score"></div>
+      <!-- Menu Screen Overlay -->
+      <div id="menu-overlay" class="overlay">
+        <div class="menu-content">
+          <h1 class="game-title">Endless Runner</h1>
+          <p class="instructions">Tap or Click to Jump!</p>
+          <button id="start-btn" class="btn btn-primary">START</button>
+          <div id="high-score-menu" class="high-score"></div>
+        </div>
       </div>
-    </div>
-
-    <!-- Game Over Screen Overlay -->
-    <div id="gameover-overlay" class="overlay hidden">
-      <div class="gameover-content">
-        <h2 class="game-over-title">Game Over!</h2>
-        <div id="final-score" class="score-display">Score: 0</div>
-        <div id="high-score-display" class="high-score"></div>
-        <button id="restart-btn" class="btn btn-primary">RESTART</button>
-        <button id="menu-btn" class="btn btn-secondary">MENU</button>
+    
+      <!-- Game Over Screen Overlay -->
+      <div id="gameover-overlay" class="overlay hidden">
+        <div class="gameover-content">
+          <h2 class="game-over-title">Game Over!</h2>
+          <div id="final-score" class="score-display">Score: 0</div>
+          <div id="high-score-display" class="high-score"></div>
+          <button id="restart-btn" class="btn btn-primary">RESTART</button>
+          <button id="menu-btn" class="btn btn-secondary">MENU</button>
+        </div>
       </div>
+    
     </div>
-
+    
     <!-- Phaser 3 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
 
@@ -50,6 +52,9 @@
     <script src="js/scenes/MenuScene.js"></script>
     <script src="js/scenes/GameScene.js"></script>
     <script src="js/scenes/GameOverScene.js"></script>
+    <script src="js/entities/Enemy.js"></script>
+    <script src="js/managers/EnemyManager.js"></script>
+    <script src="js/config/EnemyConfig.js"></script>
 
     <!-- Main Game File -->
     <script src="js/main.js"></script>

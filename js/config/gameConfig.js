@@ -4,7 +4,7 @@ const GameConfig = {
 
     Player:{
         Gravity: 1500,
-        Jump_Force: -600,
+        Jump_Force: -700,
         Run_Speed: 200,
         Start_X: 100,
         Start_Y: 400,
@@ -43,7 +43,11 @@ const GameConfig = {
         BACKGROUND: '#87CEEB',      // Sky blue
         TEXT: '#FFFFFF',
         UI_BACKGROUND: 'rgba(0, 0, 0, 0.5)'
-    }
+    },
+
+    Enemy:{
+        Spawn_Interval: 3000,
+    },
 
 };
 
