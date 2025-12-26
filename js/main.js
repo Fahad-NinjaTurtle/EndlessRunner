@@ -1,26 +1,13 @@
-// ===== Device detection (optional, safe) =====
-const isMobile =
-  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
-  );
-
-// ===== DPR handling (safe cap) =====
-const DPR = Math.min(window.devicePixelRatio || 1, 2);
-
-// ===== Phaser Config =====
 const config = {
   type: Phaser.AUTO,
+  parent: "game-container",
 
-  // Use INITIAL viewport size only (do NOT keep updating)
-  width: window.innerWidth,
-  height: window.innerHeight,
+  width: 360,
+  height: 640,
 
   backgroundColor: GameConfig.Colors.BACKGROUND,
 
-  resolution: DPR,
-  antialias: true,
-  pixelArt: false,
-  roundPixels: true,
+  resolution: Math.min(window.devicePixelRatio || 1, 2),
 
   physics: {
     default: "arcade",
@@ -30,109 +17,30 @@ const config = {
     },
   },
 
-  scene: [
-    PreloadScene,
-    MenuScene,
-    GameScene,
-    GameOverScene,
-  ],
+  scale: {
+    mode: Phaser.Scale.RESIZE,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
 
-scale: {
-  mode: Phaser.Scale.RESIZE,
-  autoCenter: Phaser.Scale.CENTER_BOTH,
-},
-
+  scene: [PreloadScene, MenuScene, GameScene, GameOverScene],
 };
 
 const game = new Phaser.Game(config);
-window.game = game;
 
-// ===================================================
-// ✅ SINGLE, SAFE CANVAS FIT FUNCTION
-// ===================================================
-function fitCanvasToScreen() {
-  const canvas = game.canvas;
-  if (!canvas) return;
 
+function resizeGame() {
   const width = window.innerWidth;
   const height = window.innerHeight;
 
-  // Internal resolution (real pixels)
-  canvas.width = Math.round(width * DPR);
-  canvas.height = Math.round(height * DPR);
-
-  // CSS size (display size)
-  canvas.style.width = "100%";
-  canvas.style.height = "100%";
-  canvas.style.display = "block";
-  canvas.style.position = "fixed";
-  canvas.style.top = "0";
-  canvas.style.left = "0";
+  game.scale.resize(width, height);
 }
 
-// ===================================================
-// ✅ FULLSCREEN CONTAINER (NO visualViewport)
-// ===================================================
-function fitContainer() {
-  const container = document.getElementById("game-container");
-  if (!container) return;
-
-  container.style.width = window.innerWidth + "px";
-  container.style.height = window.innerHeight + "px";
-  container.style.position = "fixed";
-  container.style.top = "0";
-  container.style.left = "0";
-  container.style.margin = "0";
-  container.style.padding = "0";
-}
-
-// ===================================================
-// ✅ APPLY ONCE GAME IS READY
-// ===================================================
-game.events.once("ready", () => {
-  fitContainer();
-  fitCanvasToScreen();
-});
-
-// ===================================================
-// ✅ HANDLE REAL RESIZES ONLY (NO POLLING)
-// ===================================================
 window.addEventListener("resize", () => {
-  // Delay lets mobile browser finish UI animation
-  setTimeout(() => {
-    fitContainer();
-    fitCanvasToScreen();
-  }, 150);
+  setTimeout(resizeGame, 100);
 });
 
 window.addEventListener("orientationchange", () => {
-  setTimeout(() => {
-    fitContainer();
-    fitCanvasToScreen();
-  }, 200);
-});
-
-// ===================================================
-// ✅ DEBUG (OPTIONAL – SAFE)
-// ===================================================
-game.events.once("ready", () => {
-  setTimeout(() => {
-    const canvas = game.canvas;
-    if (!canvas) return;
-
-    const actualResolution =
-      canvas.clientWidth > 0
-        ? (canvas.width / canvas.clientWidth).toFixed(2)
-        : "N/A";
-
-    console.log("=== PHASER MOBILE CHECK ===");
-    console.log("Viewport:", window.innerWidth, "x", window.innerHeight);
-    console.log("Canvas Internal:", canvas.width, "x", canvas.height);
-    console.log("Canvas Display:", canvas.clientWidth, "x", canvas.clientHeight);
-    console.log("DPR:", window.devicePixelRatio);
-    console.log("Actual Resolution:", actualResolution);
-    console.log("===========================");
-  }, 300);
+  setTimeout(resizeGame, 200);
 });
 
 
