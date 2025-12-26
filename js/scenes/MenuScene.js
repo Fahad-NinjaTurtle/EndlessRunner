@@ -43,29 +43,34 @@ class MenuScene extends Phaser.Scene {
       startBtn.parentNode.replaceChild(newStartBtn, startBtn);
 
       newStartBtn.addEventListener("click", async () => {
-        // 1️⃣ FULLSCREEN (FIRST)
+
+        // 1️⃣ Fullscreen
         if (this.scale && !this.scale.isFullscreen) {
           await this.scale.startFullscreen();
         }
-        // 2️⃣ Try to force landscape
+      
+        // 2️⃣ Lock landscape (mobile)
         if (screen.orientation && screen.orientation.lock) {
           try {
             await screen.orientation.lock("landscape");
-            console.log("Orientation locked to landscape");
-          } catch (e) {
-            console.warn("Orientation lock failed:", e);
-          }
+          } catch (e) {}
         }
-
-        // Hide menu
-        const menuOverlay = document.getElementById("menu-overlay");
-        if (menuOverlay) {
-          menuOverlay.classList.add("hidden");
-        }
-
-        // Start game
-        this.scene.start("GameScene");
+      
+        // 3️⃣ 🔥 WAIT for orientation + viewport settle
+        setTimeout(() => {
+      
+          const w = window.innerWidth;
+          const h = window.innerHeight;
+      
+          // 4️⃣ FORCE Phaser resize
+        //   this.scale.resize(w, h);
+      
+          // 5️⃣ Restart scene CLEAN (important)
+          this.scene.start("GameScene");
+      
+        }, 300); // 🔥 CRITICAL DELAY
       });
+      
     }
   }
 }

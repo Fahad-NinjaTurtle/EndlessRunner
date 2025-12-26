@@ -28,6 +28,12 @@ const EnemyConfig = {
       type: 'hazard',
       speed: 300,
       yOffset: 0
+    },
+    slime_spike: {
+      key: 'Slime_Spike_a',
+      type: 'ground',
+      speed: 220,
+      yOffset: 0
     }
   };
   

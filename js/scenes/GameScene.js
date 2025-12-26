@@ -31,6 +31,8 @@ class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.ground);
 
     this.setupInput();
+    this.enemiesAvoided = 0;
+    this.enemiesForDoubleJump = 4;
 
     this.enemyManager = new EnemyManager(this);
 
@@ -43,23 +45,33 @@ class GameScene extends Phaser.Scene {
       this
     );
 
-    this.physics.add.collider(
-        this.enemyManager.enemies,
-        this.ground
-      );
-      
+    this.physics.add.collider(this.enemyManager.enemies, this.ground);
   }
   onPlayerHit(player, enemy) {
     this.physics.pause();
-  
+
     player.setTint(0xff0000);
     player.anims.stop();
-  
+
     this.time.delayedCall(800, () => {
       this.endGame();
     });
   }
-  
+  onEnemyAvoided() {
+    this.enemiesAvoided++;
+
+    if (this.enemiesAvoided % this.enemiesForDoubleJump === 0) {
+      this.grantDoubleJump();
+    }
+  }
+
+  grantDoubleJump() {
+    this.player.extraJumps = this.player.maxExtraJumps;
+
+    // 🔔 Optional feedback
+    console.log("🎉 Double Jump Ready!");
+  }
+
   createGround() {
     const screenHeight = this.cameras.main.height;
     const screenWidth = this.cameras.main.width;
@@ -117,7 +129,6 @@ class GameScene extends Phaser.Scene {
     this.ground?.update(delta);
     this.mud?.update(delta);
     this.enemyManager.update();
-
   }
 
   endGame() {

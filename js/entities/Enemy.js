@@ -51,9 +51,13 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     // 🔥 MOVE LEFT EVERY FRAME (guaranteed)
     this.x -= this.speed * (this.scene.game.loop.delta / 1000);
 
-    // Destroy when off screen
     if (this.x < -this.width) {
-      this.destroy();
-    }
+        // 🔥 Enemy successfully avoided
+        if (this.scene && this.scene.onEnemyAvoided) {
+          this.scene.onEnemyAvoided();
+        }
+        this.destroy();
+      }
+      
   }
 }
