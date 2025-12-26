@@ -39,14 +39,16 @@ class PreloadScene extends Phaser.Scene {
         this.load.image('player_walk_a', 'assets/images/Characters/character_beige_walk_a.png');
         this.load.image('player_walk_b', 'assets/images/Characters/character_beige_walk_b.png');
         this.load.image('player_jump', 'assets/images/Characters/character_beige_jump.png');
-    
+        this.load.image('ground_tile', 'assets/images/Tiles/terrain_grass_block_top.png');
+        this.load.image('mud_tile', 'assets/images/Tiles/terrain_grass_block_center.png');
+
         // Load background layers for parallax effect
         // Layer 1: Far background - Solid Sky (slowest - appears farthest)
         this.load.image('bg_layer1', 'assets/images/Backgrounds/background_solid_sky.png');
         
         // Layer 2: Mid background - Clouds (medium speed)
         // Try solid_cloud first (more visible), fallback to clouds if needed
-        this.load.image('bg_layer2', 'assets/images/Backgrounds/background_cloud_trees.png');
+        this.load.image('bg_layer2', 'assets/images/Backgrounds/background_clouds.png');
         // Alternative: this.load.image('bg_layer2', 'assets/images/Backgrounds/background_solid_cloud.png');
         
         // Layer 3: Near background - Trees/Hills (fastest - appears closest)

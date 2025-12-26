@@ -37,10 +37,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         // Set body size (adjust to match sprite)
         this.body.setSize(this.width * 0.7, this.height * 0.9);
         this.body.setOffset(this.width * 0.15, this.height * 0.05);
-        
-        // Set collision bounds
-        this.setCollideWorldBounds(true);
-        
+                
         // Set bounce (optional - for landing effect)
         this.setBounce(0);
         
