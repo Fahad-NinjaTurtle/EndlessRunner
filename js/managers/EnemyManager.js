@@ -18,10 +18,13 @@ class EnemyManager {
       const data = EnemyConfig[randomKey];
   
       const x = this.scene.cameras.main.width + 50;
+      const groundY = this.scene.groundY ?? this.scene.cameras.main.height * 0.8;
+
       const y =
         data.type === 'flying'
-          ? this.scene.groundY + data.yOffset
-          : this.scene.groundY;
+          ? groundY + data.yOffset
+          : groundY;
+      
   
       const enemy = new Enemy(this.scene, x, y, data);
       this.enemies.add(enemy);

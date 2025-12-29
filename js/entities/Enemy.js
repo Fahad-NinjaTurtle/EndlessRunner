@@ -55,6 +55,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         // 🔥 Enemy successfully avoided
         if (this.scene && this.scene.onEnemyAvoided) {
           this.scene.onEnemyAvoided();
+          console.log("Enemy avoided");
         }
         this.destroy();
       }

@@ -63,10 +63,20 @@ class MenuScene extends Phaser.Scene {
           const h = window.innerHeight;
       
           // 4️⃣ FORCE Phaser resize
-        //   this.scale.resize(w, h);
+          this.scale.resize(w, h);
       
           // 5️⃣ Restart scene CLEAN (important)
-          this.scene.start("GameScene");
+          const startGameWhenLandscape = () => {
+            if (window.innerWidth > window.innerHeight) {
+              this.scene.start("GameScene");
+            } else {
+              // Still portrait → wait
+              setTimeout(startGameWhenLandscape, 100);
+            }
+          };
+          
+          startGameWhenLandscape();
+          
       
         }, 300); // 🔥 CRITICAL DELAY
       });

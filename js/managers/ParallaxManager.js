@@ -39,7 +39,11 @@ class ParallaxManager {
       fillScreen: true,
     });
   }
-
+  resize() {
+    this.destroy();
+    this.createLayers();
+  }
+  
   createLayer(config) {
     const width = this.scene.cameras.main.width;
     const height = this.scene.cameras.main.height;
