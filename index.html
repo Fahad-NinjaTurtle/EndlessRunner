@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <button id="pauseBtn" class="pause-btn hidden">⏸</button>
     <div id="game-container">
+      <button id="pauseBtn" class="pause-btn hidden" aria-label="Pause Game">⏸</button>
       <!-- HUD (HTML) -->
       <div id="hud" class="hud">
         <div class="hud-inner">
@@ -46,6 +46,16 @@
           <div id="high-score-display" class="high-score"></div>
           <button id="restart-btn" class="btn btn-primary">RESTART</button>
           <button id="menu-btn" class="btn btn-secondary">MENU</button>
+        </div>
+      </div>
+
+      <!-- Pause Screen Overlay -->
+      <div id="pause-overlay" class="overlay hidden">
+        <div class="pause-content">
+          <h2 class="pause-title">PAUSED</h2>
+          <div id="countdown-display" class="countdown-display hidden"></div>
+          <button id="resume-btn" class="btn btn-primary">RESUME</button>
+          <button id="pause-menu-btn" class="btn btn-secondary">MENU</button>
         </div>
       </div>
     </div>

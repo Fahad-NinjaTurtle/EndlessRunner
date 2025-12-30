@@ -14,7 +14,19 @@ class GameOverScene extends Phaser.Scene {
     if (menuOverlay) {
       menuOverlay.classList.add("hidden");
     }
-    document.getElementById("pauseBtn")?.classList.add("hidden");
+    
+    // Hide pause overlay if visible
+    const pauseOverlay = document.getElementById("pause-overlay");
+    if (pauseOverlay) {
+      pauseOverlay.classList.add("hidden");
+    }
+    
+    // Hide pause button
+    const pauseBtn = document.getElementById("pauseBtn");
+    if (pauseBtn) {
+      pauseBtn.classList.add("hidden");
+      pauseBtn.style.display = "none";
+    }
 
     // Show game over overlay
     const gameOverOverlay = document.getElementById("gameover-overlay");

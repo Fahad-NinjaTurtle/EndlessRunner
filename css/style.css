@@ -140,11 +140,62 @@ body {
   display: none;
 }
 
+/* Pause Button */
 .pause-btn {
-  position: fixed;
+  position: absolute;
   top: 12px;
   right: 12px;
-  z-index: 9999;
+  z-index: 10000;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.pause-btn:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+  transform: scale(1.1);
+}
+
+.pause-btn:active {
+  transform: scale(0.95);
+}
+
+/* Ensure pause button is visible when not hidden */
+.pause-btn:not(.hidden) {
+  display: flex !important;
+}
+
+/* Mobile responsive pause button */
+@media (max-width: 768px) {
+  .pause-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    top: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pause-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    top: 8px;
+    right: 8px;
+  }
 }
 .hidden {
   display: none;
@@ -157,7 +208,8 @@ body {
 }
 /* Menu Content */
 .menu-content,
-.gameover-content {
+.gameover-content,
+.pause-content {
   text-align: center;
   color: white;
   padding: 20px;
@@ -185,6 +237,45 @@ body {
   margin-bottom: 20px;
   color: #ff0000;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.pause-title {
+  font-size: clamp(36px, 8vw, 48px);
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #ffa500;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.countdown-display {
+  font-size: clamp(72px, 15vw, 120px);
+  font-weight: bold;
+  color: #4caf50;
+  margin-bottom: 30px;
+  text-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+  animation: countdownPulse 0.5s ease-in-out;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.countdown-display.hidden {
+  display: none;
+}
+
+@keyframes countdownPulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .score-display {
@@ -266,8 +357,14 @@ body {
 /* Mobile Optimizations */
 @media (max-width: 768px) {
   .menu-content,
-  .gameover-content {
+  .gameover-content,
+  .pause-content {
     padding: 15px;
+  }
+
+  .countdown-display {
+    font-size: clamp(60px, 12vw, 100px);
+    min-height: 100px;
   }
 
   .btn {
@@ -279,8 +376,14 @@ body {
 
 @media (max-width: 480px) {
   .menu-content,
-  .gameover-content {
+  .gameover-content,
+  .pause-content {
     padding: 10px;
+  }
+
+  .countdown-display {
+    font-size: clamp(48px, 10vw, 80px);
+    min-height: 80px;
   }
 
   .btn {

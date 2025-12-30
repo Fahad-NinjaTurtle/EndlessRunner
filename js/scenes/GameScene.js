@@ -15,12 +15,16 @@ class GameScene extends Phaser.Scene {
     // Hide all overlays when game starts
     const menuOverlay = document.getElementById("menu-overlay");
     const gameOverOverlay = document.getElementById("gameover-overlay");
+    const pauseOverlay = document.getElementById("pause-overlay");
 
     if (menuOverlay) {
       menuOverlay.classList.add("hidden");
     }
     if (gameOverOverlay) {
       gameOverOverlay.classList.add("hidden");
+    }
+    if (pauseOverlay) {
+      pauseOverlay.classList.add("hidden");
     }
 
     // Initialize game state
@@ -66,13 +70,16 @@ class GameScene extends Phaser.Scene {
     this.extraJumps = 0;
     this.enemiesForDoubleJump = 4;
 
-    this.pauseBtn = document.getElementById("pauseBtn");
-    this.pauseBtn.classList.remove("hidden");
+    // Setup pause functionality
+    this.setupPause();
 
-    this.pauseBtn.onclick = () => {
-      this.scene.pause();
-    };
-
+    // Listen for fullscreen changes to reposition pause button
+    document.addEventListener("fullscreenchange", () => {
+      this.ensurePauseButtonPosition();
+    });
+    document.addEventListener("webkitfullscreenchange", () => {
+      this.ensurePauseButtonPosition();
+    });
 
     this.bgMusic = this.sound.add("bg_music",{
       loop: true,
@@ -261,8 +268,181 @@ class GameScene extends Phaser.Scene {
     }
   }
 
+  setupPause() {
+    this.pauseBtn = document.getElementById("pauseBtn");
+    this.pauseOverlay = document.getElementById("pause-overlay");
+    this.resumeBtn = document.getElementById("resume-btn");
+    this.pauseMenuBtn = document.getElementById("pause-menu-btn");
+    this.countdownDisplay = document.getElementById("countdown-display");
+
+    // Show pause button
+    if (this.pauseBtn) {
+      this.pauseBtn.classList.remove("hidden");
+      this.pauseBtn.style.display = "flex"; // Force display
+      this.pauseBtn.style.visibility = "visible"; // Ensure visibility
+    } else {
+      console.error("Pause button not found!");
+    }
+
+    // Pause button click handler
+    this.pauseBtn.onclick = () => {
+      this.pauseGame();
+    };
+
+    // Resume button handler
+    if (this.resumeBtn) {
+      const newResumeBtn = this.resumeBtn.cloneNode(true);
+      this.resumeBtn.parentNode.replaceChild(newResumeBtn, this.resumeBtn);
+      this.resumeBtn = newResumeBtn;
+
+      newResumeBtn.addEventListener("click", () => {
+        this.resumeGame();
+      });
+    }
+
+    // Pause menu button handler
+    if (this.pauseMenuBtn) {
+      const newPauseMenuBtn = this.pauseMenuBtn.cloneNode(true);
+      this.pauseMenuBtn.parentNode.replaceChild(newPauseMenuBtn, this.pauseMenuBtn);
+      this.pauseMenuBtn = newPauseMenuBtn;
+
+      newPauseMenuBtn.addEventListener("click", () => {
+        this.goToMenuFromPause();
+      });
+    }
+
+    // Listen for scene pause/resume events
+    this.events.on("pause", () => {
+      this.showPauseOverlay();
+    });
+
+    this.events.on("resume", () => {
+      // Countdown will be handled in resumeGame
+    });
+  }
+
+  pauseGame() {
+    if (this.gameOver) return;
+    
+    this.scene.pause();
+    this.showPauseOverlay();
+    
+    // Pause background music
+    if (this.bgMusic && this.bgMusic.isPlaying) {
+      this.bgMusic.pause();
+    }
+  }
+
+  showPauseOverlay() {
+    if (this.pauseOverlay) {
+      this.pauseOverlay.classList.remove("hidden");
+      this.countdownDisplay?.classList.add("hidden");
+    }
+  }
+
+  hidePauseOverlay() {
+    if (this.pauseOverlay) {
+      this.pauseOverlay.classList.add("hidden");
+    }
+  }
+
+  resumeGame() {
+    // Hide resume button and show countdown
+    if (this.resumeBtn) {
+      this.resumeBtn.style.display = "none";
+    }
+    if (this.pauseMenuBtn) {
+      this.pauseMenuBtn.style.display = "none";
+    }
+
+    // Start countdown
+    this.startCountdown(() => {
+      // Countdown complete - resume game
+      this.hidePauseOverlay();
+      this.scene.resume();
+      
+      // Resume background music
+      if (this.bgMusic && !this.bgMusic.isPlaying) {
+        this.bgMusic.resume();
+      }
+
+      // Show buttons again for next pause
+      if (this.resumeBtn) {
+        this.resumeBtn.style.display = "block";
+      }
+      if (this.pauseMenuBtn) {
+        this.pauseMenuBtn.style.display = "block";
+      }
+    });
+  }
+
+  startCountdown(onComplete) {
+    if (!this.countdownDisplay) {
+      onComplete();
+      return;
+    }
+
+    this.countdownDisplay.classList.remove("hidden");
+    let count = 3;
+
+    // Use JavaScript setTimeout instead of Phaser timer (works when scene is paused)
+    const updateCountdown = () => {
+      if (count > 0) {
+        this.countdownDisplay.textContent = count;
+        count--;
+        setTimeout(updateCountdown, 1000);
+      } else {
+        this.countdownDisplay.textContent = "GO!";
+        setTimeout(() => {
+          this.countdownDisplay.classList.add("hidden");
+          onComplete();
+        }, 500);
+      }
+    };
+
+    updateCountdown();
+  }
+
+  ensurePauseButtonPosition() {
+    // Make sure pause button and overlay are in the correct container (fullscreen or game-container)
+    const fsElement =
+      document.fullscreenElement ||
+      document.webkitFullscreenElement;
+    
+    const container = fsElement || document.getElementById("game-container");
+    
+    if (container) {
+      if (this.pauseBtn && this.pauseBtn.parentNode !== container) {
+        container.appendChild(this.pauseBtn);
+      }
+      if (this.pauseOverlay && this.pauseOverlay.parentNode !== container) {
+        container.appendChild(this.pauseOverlay);
+      }
+    }
+  }
+
+  goToMenuFromPause() {
+    // Stop background music
+    if (this.bgMusic) {
+      this.bgMusic.stop();
+    }
+
+    // Hide pause overlay
+    this.hidePauseOverlay();
+
+    // Hide pause button
+    if (this.pauseBtn) {
+      this.pauseBtn.classList.add("hidden");
+    }
+
+    // Resume scene first (to clean up), then go to menu
+    this.scene.resume();
+    this.scene.start("MenuScene");
+  }
+
   update(time, delta) {
     if (this.gameOver) return;
+    if (this.scene.isPaused()) return; // Don't update when paused
 
     this.parallaxManager?.update(delta);
     this.player?.update();
@@ -280,6 +460,15 @@ class GameScene extends Phaser.Scene {
     if (this.gameOver) return;
 
     this.gameOver = true;
+    
+    // Hide pause button
+    if (this.pauseBtn) {
+      this.pauseBtn.classList.add("hidden");
+    }
+    
+    // Hide pause overlay if visible
+    this.hidePauseOverlay();
+    
     if (this.bgMusic) {
       this.bgMusic.stop();
     }

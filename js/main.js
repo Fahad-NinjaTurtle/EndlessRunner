@@ -73,19 +73,25 @@ if (isMobileDevice()) {
 
 document.addEventListener("fullscreenchange", () => {
   const hud = document.getElementById("hud");
-  if (!hud) return;
+  const pauseBtn = document.getElementById("pauseBtn");
+  const pauseOverlay = document.getElementById("pause-overlay");
 
   const fsElement =
     document.fullscreenElement ||
     document.webkitFullscreenElement;
 
+  const container = document.getElementById("game-container");
+
   if (fsElement) {
-    // Entering fullscreen → move HUD inside
-    fsElement.appendChild(hud);
+    // Entering fullscreen → move HUD, pause button, and pause overlay inside
+    if (hud) fsElement.appendChild(hud);
+    if (pauseBtn) fsElement.appendChild(pauseBtn);
+    if (pauseOverlay) fsElement.appendChild(pauseOverlay);
   } else {
-    // Exiting fullscreen → move HUD back to game container
-    const container = document.getElementById("game-container");
-    container.appendChild(hud);
+    // Exiting fullscreen → move everything back to game container
+    if (hud && container) container.appendChild(hud);
+    if (pauseBtn && container) container.appendChild(pauseBtn);
+    if (pauseOverlay && container) container.appendChild(pauseOverlay);
   }
 });
 
@@ -104,7 +110,7 @@ function scaleHudFromPixel7() {
   let scale = cssWidth / PIXEL_7_WIDTH;
 
   // Clamp scale so it never breaks UI
-  scale = Math.max(1, Math.min(scale, 2.6));
+  scale = Math.max(1, Math.min(scale, 2));
 
   // Boost high-end phones slightly (S21 Ultra etc.)
   if (dpr >= 3) {

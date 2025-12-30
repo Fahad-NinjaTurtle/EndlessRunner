@@ -114,8 +114,8 @@ class PreloadScene extends Phaser.Scene {
 
 
     // sounds
-    this.load.audio("jump", "assets/Sounds/sfx_Jump.ogg");
-    this.load.audio("double_jump", "assets/Sounds/sfx_Jump-high.ogg");
+    this.load.audio("jump", "assets/Sounds/sfx_jump.ogg");
+    this.load.audio("double_jump", "assets/Sounds/sfx_jump-high.ogg");
     this.load.audio("hit", "assets/Sounds/sfx_hurt.ogg");
     this.load.audio("bg_music", "assets/Sounds/gameplaySound.mp3");
 
