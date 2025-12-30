@@ -4,6 +4,14 @@ class GameScene extends Phaser.Scene {
   }
 
   create() {
+
+        // HTML HUD refs
+        this.hudEl = document.getElementById("hud");
+        this.hudEnemiesEl = document.getElementById("hud-enemies");
+        this.hudJumpsEl = document.getElementById("hud-jumps");
+    
+        // show HUD during gameplay
+        this.hudEl?.classList.remove("hidden");
     // Hide all overlays when game starts
     const menuOverlay = document.getElementById("menu-overlay");
     const gameOverOverlay = document.getElementById("gameover-overlay");
@@ -51,25 +59,72 @@ class GameScene extends Phaser.Scene {
       // this.createGround();
     });
 
+
     this.scale.on("resize", this.handleResize, this);
 
     this.enemiesAvoided = 0;
     this.extraJumps = 0;
     this.enemiesForDoubleJump = 4;
-    this.hudText = this.add
-      .text(20, 20, "", {
-        fontSize: "18px",
-        fill: "#000000",
-        fontFamily: "Arial",
-      })
-      .setScrollFactor(0)
-      .setDepth(1000);
+
     this.pauseBtn = document.getElementById("pauseBtn");
     this.pauseBtn.classList.remove("hidden");
 
     this.pauseBtn.onclick = () => {
       this.scene.pause();
     };
+
+
+    this.bgMusic = this.sound.add("bg_music",{
+      loop: true,
+      volume: 0.5,
+    });
+
+    if(!this.bgMusic.isPlaying) {
+      this.bgMusic.play();
+    }
+
+    const cam = this.cameras.main;
+
+    // Always lock vertical gameplay
+    const worldHeight = DESIGN_HEIGHT;
+
+    // MOBILE → fixed world
+    if (!this.sys.game.device.os.desktop) {
+      cam.setBounds(0, 0, DESIGN_WIDTH, DESIGN_HEIGHT);
+      cam.centerOn(DESIGN_WIDTH / 2, DESIGN_HEIGHT / 2);
+      return;
+    }
+
+    // DESKTOP → expand horizontally
+    const canvasWidth = this.scale.canvas.width;
+    const canvasHeight = this.scale.canvas.height;
+
+    // How many world units fit vertically
+    const scale = canvasHeight / DESIGN_HEIGHT;
+
+    // Visible world width on desktop
+    const visibleWorldWidth = canvasWidth / scale;
+
+    // Set wider camera bounds
+    cam.setBounds(0, 0, visibleWorldWidth, DESIGN_HEIGHT);
+
+    // Center camera
+    cam.centerOn(visibleWorldWidth / 2, DESIGN_HEIGHT / 2);
+
+    this.isDesktop = this.sys.game.device.os.desktop;
+
+    // Base world size
+    this.worldHeight = DESIGN_HEIGHT;
+    this.worldWidth = DESIGN_WIDTH;
+
+    // Desktop → expand world horizontally
+    if (this.isDesktop) {
+      const canvasWidth = this.scale.canvas.width;
+      const canvasHeight = this.scale.canvas.height;
+
+      const scale = canvasHeight / DESIGN_HEIGHT;
+      this.worldWidth = canvasWidth / scale;
+    }
   }
 
   handleResize(gameSize) {
@@ -84,7 +139,6 @@ class GameScene extends Phaser.Scene {
     if (this.parallaxManager) {
       this.parallaxManager.resize();
     }
-    
 
     // 3️⃣ Resize ground
     if (this.ground) {
@@ -123,8 +177,8 @@ class GameScene extends Phaser.Scene {
 
     player.setTint(0xff0000);
     player.anims.stop();
-
-    this.time.delayedCall(800, () => {
+    this.sound.play("hit", { volume: 1 });
+    this.time.delayedCall(200, () => {
       this.endGame();
     });
   }
@@ -157,8 +211,11 @@ class GameScene extends Phaser.Scene {
       return;
     }
 
-    const screenHeight = this.cameras.main.height;
+    // const screenWidth = DESIGN_WIDTH;
+    // const screenHeight = DESIGN_HEIGHT;
+
     const screenWidth = this.cameras.main.width;
+    const screenHeight = this.cameras.main.height;
 
     const groundTopY = screenHeight * 0.8;
 
@@ -214,16 +271,19 @@ class GameScene extends Phaser.Scene {
     this.mud?.update(delta);
     this.enemyManager.update();
 
-    this.hudText.setText(
-      `Enemies Avoided: ${this.enemiesAvoided}\nExtra Jumps: ${this.extraJumps}`
-    );
+    if (this.hudEnemiesEl) this.hudEnemiesEl.textContent = `Enemies Avoided: ${this.enemiesAvoided}`;
+    if (this.hudJumpsEl) this.hudJumpsEl.textContent = `Extra Jumps: ${this.extraJumps}`;
+    
   }
 
   endGame() {
     if (this.gameOver) return;
 
     this.gameOver = true;
-
+    if (this.bgMusic) {
+      this.bgMusic.stop();
+    }
+    
     this.scene.start("GameOverScene", {
       score: this.enemiesAvoided, // 🔥 REAL SCORE
     });

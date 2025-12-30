@@ -1,12 +1,15 @@
 const MAX_DPR = 2; // mobile-safe
 const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
 
+const DESIGN_WIDTH = 915;
+const DESIGN_HEIGHT = 412;
+
 const config = {
   type: Phaser.WEBGL,
   parent: 'game-container',
 
-  width: window.innerWidth,
-  height: window.innerHeight,
+  width: DESIGN_WIDTH,
+  height: DESIGN_HEIGHT,
 
   resolution: dpr,
   backgroundColor: GameConfig.Colors.BACKGROUND,
@@ -18,9 +21,12 @@ const config = {
   },
 
   scale: {
-    mode: Phaser.Scale.RESIZE,
-    autoCenter: Phaser.Scale.CENTER_BOTH
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: DESIGN_WIDTH,
+    height: DESIGN_HEIGHT
   },
+  
 
   physics: {
     default: "arcade",
@@ -63,3 +69,52 @@ if (isMobileDevice()) {
 } else {
   console.log("User is on desktop");
 }
+
+
+document.addEventListener("fullscreenchange", () => {
+  const hud = document.getElementById("hud");
+  if (!hud) return;
+
+  const fsElement =
+    document.fullscreenElement ||
+    document.webkitFullscreenElement;
+
+  if (fsElement) {
+    // Entering fullscreen → move HUD inside
+    fsElement.appendChild(hud);
+  } else {
+    // Exiting fullscreen → move HUD back to game container
+    const container = document.getElementById("game-container");
+    container.appendChild(hud);
+  }
+});
+
+
+function scaleHudFromPixel7() {
+  const hudInner = document.querySelector(".hud-inner");
+  if (!hudInner) return;
+
+  const cssWidth = window.innerWidth;
+  const dpr = window.devicePixelRatio || 1;
+
+  // Pixel 7 reference
+  const PIXEL_7_WIDTH = 412;
+
+  // Base scale relative to Pixel 7
+  let scale = cssWidth / PIXEL_7_WIDTH;
+
+  // Clamp scale so it never breaks UI
+  scale = Math.max(1, Math.min(scale, 2.6));
+
+  // Boost high-end phones slightly (S21 Ultra etc.)
+  if (dpr >= 3) {
+    scale *= 2.15;
+  }
+
+  hudInner.style.transform = `scale(${scale})`;
+}
+
+// Call it
+scaleHudFromPixel7();
+window.addEventListener("resize", scaleHudFromPixel7);
+document.addEventListener("fullscreenchange", scaleHudFromPixel7);

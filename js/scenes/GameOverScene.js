@@ -27,6 +27,8 @@ class GameOverScene extends Phaser.Scene {
 
     // Set up button handlers
     this.setupGameOverButtons();
+    document.getElementById("hud")?.classList.add("hidden");
+
   }
 
   updateScoreDisplay() {

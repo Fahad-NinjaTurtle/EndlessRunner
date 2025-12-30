@@ -12,6 +12,21 @@
   <body>
     <button id="pauseBtn" class="pause-btn hidden">⏸</button>
     <div id="game-container">
+      <!-- HUD (HTML) -->
+      <div id="hud" class="hud">
+        <div class="hud-inner">
+          <div class="hud-row">
+            <!-- <img src="" class="hud-icon"> -->
+            <span id="hud-enemies">Enemies Avoided: 0</span>
+          </div>
+      
+          <div class="hud-row">
+            <!-- <img src="" class="hud-icon"> -->
+            <span id="hud-jumps">Extra Jumps: 0</span>
+          </div>
+        </div>
+      </div>
+      
 
       <!-- Menu Screen Overlay -->
       <div id="menu-overlay" class="overlay">
@@ -22,7 +37,7 @@
           <div id="high-score-menu" class="high-score"></div>
         </div>
       </div>
-    
+
       <!-- Game Over Screen Overlay -->
       <div id="gameover-overlay" class="overlay hidden">
         <div class="gameover-content">
@@ -33,9 +48,8 @@
           <button id="menu-btn" class="btn btn-secondary">MENU</button>
         </div>
       </div>
-    
     </div>
-    
+
     <!-- Phaser 3 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
 

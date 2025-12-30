@@ -70,6 +70,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
       this.body.setVelocityY(jumpForce);
       this.isOnGround = false;
       this.hasDoubleJumped = false;
+      this.isJumping = true; // ✅ FIX
+      this.scene.sound.play("jump", { volume: 0.7 });
       return;
     }
   
@@ -78,6 +80,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
       this.body.setVelocityY(jumpForce);
       this.scene.extraJumps--;
       this.hasDoubleJumped = true;
+      this.isJumping = true; // ✅ FIX
+      this.scene.sound.play("double_jump", { volume: 0.8 });
     }
   }
   

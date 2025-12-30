@@ -1,195 +1,299 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #1a1a1a;
-    font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1a1a1a;
+  font-family: Arial, sans-serif;
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    overflow: hidden;
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+#game-container {
+  position: relative; /* 🔥 VERY IMPORTANT */
+  width: 100vw;
+  height: 100vh;
+  background: black;
+}
+
+.hud {
+  position: absolute;
+  top: 1.5vh;
+  left: 1.5vw;
+  z-index: 2000;
+  color: #000;
+  font-family: Arial, system-ui, sans-serif;
+  font-weight: 700;
+  line-height: 1.15;
+
+  /* responsive font size */
+  font-size: 18px;
+
+  /* keep text sharp */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+  pointer-events: none; /* so taps still go to the game */
+}
+
+/* Large phones like S21 Ultra */
+/* @media (min-width: 3200px) and (-webkit-min-device-pixel-ratio: 3) {
+    #hud {
+      font-size: 22px;
+    }
   }
   
-  #game-container {
-    position: relative;   /* 🔥 VERY IMPORTANT */
-    width: 100vw;
-    height: 100vh;
-    background: black;
-  }
-  
-  /* Phaser canvas */
-  #game-container canvas {
-    width: 100% !important;
-    height: 100% !important;
-    display: block;
-  }
-  
-  /* Overlays */
-  .overlay {
-    position: absolute;   /* 🔥 NOT fixed */
-    inset: 0;
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0,0,0,0.7);
-  }
-  
-  .overlay.hidden {
-    display: none;
-  }
-  
-  .pause-btn {
-    position: fixed;
+  /* Very large / tablets */
+  /* @media (min-width: 2000px) {
+    #hud {
+      font-size: 26px;
+    }
+  } */ 
+/* .hud {
+    background: rgba(255, 0, 0, 0.2);
+  } */
+
+  /* HUD base */
+.hud {
+    position: absolute;
     top: 12px;
-    right: 12px;
-    z-index: 9999;
+    left: 12px;
+    z-index: 1000;
+    pointer-events: none;
   }
-  .hidden { display: none; }
   
+  /* This is what we scale */
+  .hud-inner {
+    transform-origin: top left;
+  }
+  
+  /* Layout */
+  .hud-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  
+  /* Text */
+  .hud-row span {
+    font-size: 16px;      /* Pixel 7 base */
+    font-weight: 600;
+    color: #000;
+  }
+  
+  /* Icons */
+  .hud-icon {
+    width: 18px;          /* Pixel 7 base */
+    height: 18px;
+    margin-right: 6px;
+  }
+  
+  #ui-root {
+    position: absolute;
+    width: 915px;
+    height: 412px;
+  
+    top: 0;
+    left: 0;
+  
+    transform-origin: top left;
+    pointer-events: none;
+  }
+  
+  #ui-root button {
+    pointer-events: auto;
+  }
+  
+.hud.hidden {
+  display: none;
+}
+
+/* Phaser canvas */
+#game-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* Overlays */
+.overlay {
+  position: absolute; /* 🔥 NOT fixed */
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.pause-btn {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 9999;
+}
+.hidden {
+  display: none;
+}
+.overlay h1 {
+  font-size: 42px;
+}
+.overlay button {
+  font-size: 20px;
+}
 /* Menu Content */
 .menu-content,
 .gameover-content {
-    text-align: center;
-    color: white;
-    padding: 20px;
-    max-width: 90%;
-    width: 100%;
+  text-align: center;
+  color: white;
+  padding: 20px;
+  max-width: 90%;
+  width: 100%;
 }
 
 .game-title {
-    font-size: clamp(32px, 8vw, 48px);
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #FFFFFF;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-size: clamp(32px, 8vw, 48px);
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .instructions {
-    font-size: clamp(16px, 4vw, 24px);
-    color: #CCCCCC;
-    margin-bottom: 40px;
+  font-size: clamp(16px, 4vw, 24px);
+  color: #cccccc;
+  margin-bottom: 40px;
 }
 
 .game-over-title {
-    font-size: clamp(36px, 8vw, 48px);
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #FF0000;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-size: clamp(36px, 8vw, 48px);
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #ff0000;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .score-display {
-    font-size: clamp(24px, 6vw, 32px);
-    color: #FFFFFF;
-    margin-bottom: 20px;
-    font-weight: bold;
+  font-size: clamp(24px, 6vw, 32px);
+  color: #ffffff;
+  margin-bottom: 20px;
+  font-weight: bold;
 }
 
 .high-score {
-    font-size: clamp(18px, 4vw, 24px);
-    color: #FFD700;
-    margin-bottom: 30px;
+  font-size: clamp(18px, 4vw, 24px);
+  color: #ffd700;
+  margin-bottom: 30px;
 }
 
 .high-score.new {
-    animation: pulse 1s ease-in-out infinite;
+  animation: pulse 1s ease-in-out infinite;
 }
 
 @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 /* Button Styles */
 .btn {
-    display: block;
-    width: 200px;
-    max-width: 80%;
-    height: 60px;
-    margin: 15px auto;
-    border: none;
-    border-radius: 8px;
-    font-size: clamp(20px, 5vw, 28px);
-    font-weight: bold;
-    color: #FFFFFF;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: Arial, sans-serif;
-    text-transform: uppercase;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
+  display: block;
+  width: 200px;
+  max-width: 80%;
+  height: 60px;
+  margin: 15px auto;
+  border: none;
+  border-radius: 8px;
+  font-size: clamp(20px, 5vw, 28px);
+  font-weight: bold;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: Arial, sans-serif;
+  text-transform: uppercase;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .btn:active {
-    transform: scale(0.95);
+  transform: scale(0.95);
 }
 
 .btn-primary {
-    background-color: #4CAF50;
+  background-color: #4caf50;
 }
 
 .btn-primary:hover {
-    background-color: #45a049;
+  background-color: #45a049;
 }
 
 .btn-primary:active {
-    background-color: #3d8b40;
+  background-color: #3d8b40;
 }
 
 .btn-secondary {
-    background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 .btn-secondary:hover {
-    background-color: #1976D2;
+  background-color: #1976d2;
 }
 
 .btn-secondary:active {
-    background-color: #1565C0;
+  background-color: #1565c0;
 }
 
 /* Mobile Optimizations */
 @media (max-width: 768px) {
-    .menu-content,
-    .gameover-content {
-        padding: 15px;
-    }
+  .menu-content,
+  .gameover-content {
+    padding: 15px;
+  }
 
-    .btn {
-        width: 180px;
-        height: 55px;
-        margin: 12px auto;
-    }
+  .btn {
+    width: 180px;
+    height: 55px;
+    margin: 12px auto;
+  }
 }
 
 @media (max-width: 480px) {
-    .menu-content,
-    .gameover-content {
-        padding: 10px;
-    }
+  .menu-content,
+  .gameover-content {
+    padding: 10px;
+  }
 
-    .btn {
-        width: 160px;
-        height: 50px;
-        margin: 10px auto;
-    }
+  .btn {
+    width: 160px;
+    height: 50px;
+    margin: 10px auto;
+  }
 }
 
 /* Prevent text selection on buttons */
 .btn {
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }

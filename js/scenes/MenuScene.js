@@ -22,6 +22,8 @@ class MenuScene extends Phaser.Scene {
 
     // Set up button handlers
     this.setupMenuButtons();
+    document.getElementById("hud")?.classList.add("hidden");
+    this.sound.stopAll();
   }
 
   updateHighScore() {
