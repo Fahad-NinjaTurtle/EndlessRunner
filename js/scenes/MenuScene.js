@@ -15,6 +15,7 @@ class MenuScene extends Phaser.Scene {
     if (gameOverOverlay) {
       gameOverOverlay.classList.add("hidden");
     }
+    document.getElementById("pauseBtn")?.classList.add("hidden");
 
     // Update high score display
     this.updateHighScore();
@@ -43,44 +44,41 @@ class MenuScene extends Phaser.Scene {
       startBtn.parentNode.replaceChild(newStartBtn, startBtn);
 
       newStartBtn.addEventListener("click", async () => {
-
         // 1️⃣ Fullscreen
         if (this.scale && !this.scale.isFullscreen) {
           await this.scale.startFullscreen();
         }
-      
+
         // 2️⃣ Lock landscape (mobile)
         if (screen.orientation && screen.orientation.lock) {
           try {
             await screen.orientation.lock("landscape");
           } catch (e) {}
         }
-      
+
         // 3️⃣ 🔥 WAIT for orientation + viewport settle
         setTimeout(() => {
-      
           const w = window.innerWidth;
           const h = window.innerHeight;
-      
+
           // 4️⃣ FORCE Phaser resize
-          this.scale.resize(w, h);
-      
+          // this.scale.resize(w, h);
+
           // 5️⃣ Restart scene CLEAN (important)
           const startGameWhenLandscape = () => {
-            if (window.innerWidth > window.innerHeight) {
-              this.scene.start("GameScene");
-            } else {
-              // Still portrait → wait
-              setTimeout(startGameWhenLandscape, 100);
-            }
+            this.time.delayedCall(50, () => {
+              if (window.innerWidth > window.innerHeight) {
+                this.scene.start("GameScene");
+              } else {
+                // Still portrait → wait
+                setTimeout(startGameWhenLandscape, 100);
+              }
+            });
           };
-          
+
           startGameWhenLandscape();
-          
-      
         }, 300); // 🔥 CRITICAL DELAY
       });
-      
     }
   }
 }

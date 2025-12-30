@@ -4,8 +4,6 @@ class GameScene extends Phaser.Scene {
   }
 
   create() {
-
-    
     // Hide all overlays when game starts
     const menuOverlay = document.getElementById("menu-overlay");
     const gameOverOverlay = document.getElementById("gameover-overlay");
@@ -49,26 +47,45 @@ class GameScene extends Phaser.Scene {
 
     this.physics.add.collider(this.enemyManager.enemies, this.ground);
 
-    this.scale.on('resize', () => {
-      this.createGround();
+    this.scale.on("resize", () => {
+      // this.createGround();
     });
-    this.scale.on('resize', this.handleResize, this);
 
+    this.scale.on("resize", this.handleResize, this);
+
+    this.enemiesAvoided = 0;
+    this.extraJumps = 0;
+    this.enemiesForDoubleJump = 4;
+    this.hudText = this.add
+      .text(20, 20, "", {
+        fontSize: "18px",
+        fill: "#000000",
+        fontFamily: "Arial",
+      })
+      .setScrollFactor(0)
+      .setDepth(1000);
+    this.pauseBtn = document.getElementById("pauseBtn");
+    this.pauseBtn.classList.remove("hidden");
+
+    this.pauseBtn.onclick = () => {
+      this.scene.pause();
+    };
   }
+
   handleResize(gameSize) {
     if (!gameSize) return;
-  
+
     const { width, height } = gameSize;
-  
+
     // 1️⃣ Recalculate ground
     this.groundY = height * 0.8;
-  
+
     // 2️⃣ Rebuild parallax completely (CRITICAL)
     if (this.parallaxManager) {
-      this.parallaxManager.destroy();
-      this.parallaxManager = new ParallaxManager(this);
+      this.parallaxManager.resize();
     }
-  
+    
+
     // 3️⃣ Resize ground
     if (this.ground) {
       this.ground.setPosition(width / 2, this.groundY);
@@ -76,18 +93,14 @@ class GameScene extends Phaser.Scene {
       this.ground.body.setSize(width, this.ground.height);
       this.ground.body.updateFromGameObject();
     }
-  
+
     // 4️⃣ Resize mud
     if (this.mud) {
-      this.mud.setPosition(
-        width / 2,
-        this.groundY + this.ground.height
-      );
+      this.mud.setPosition(width / 2, this.groundY + this.ground.height);
       this.mud.displayWidth = width;
-      this.mud.displayHeight =
-        height - (this.groundY + this.ground.height);
+      this.mud.displayHeight = height - (this.groundY + this.ground.height);
     }
-  
+
     // 5️⃣ Snap player
     if (this.player) {
       this.player.y = this.groundY;
@@ -95,17 +108,16 @@ class GameScene extends Phaser.Scene {
       this.player.isOnGround = true;
       this.player.isJumping = false;
     }
-  
+
     // 6️⃣ Fix existing enemies
-    this.enemyManager?.enemies?.children?.iterate(enemy => {
+    this.enemyManager?.enemies?.children?.iterate((enemy) => {
       if (enemy && enemy.body) {
         enemy.y = this.groundY;
         enemy.body.updateFromGameObject();
       }
     });
   }
-  
-  
+
   onPlayerHit(player, enemy) {
     this.physics.pause();
 
@@ -120,24 +132,37 @@ class GameScene extends Phaser.Scene {
     this.enemiesAvoided++;
 
     if (this.enemiesAvoided % this.enemiesForDoubleJump === 0) {
-      this.grantDoubleJump();
+      this.extraJumps++;
     }
   }
 
-  grantDoubleJump() {
-    this.player.extraJumps = this.player.maxExtraJumps;
+  // grantDoubleJump() {
+  //   this.player.extraJumps = this.player.maxExtraJumps;
 
-    // 🔔 Optional feedback
-    console.log("🎉 Double Jump Ready!");
-  }
+  //   // 🔔 Optional feedback
+  //   console.log("🎉 Double Jump Ready!");
+  // }
 
   createGround() {
+    // 🔐 SAFETY CHECK
+    if (!this.textures.exists("ground_tile")) {
+      console.warn("⚠ ground_tile texture not ready yet");
+      return;
+    }
+
+    const groundTile = this.textures.get("ground_tile").getSourceImage();
+
+    if (!groundTile) {
+      console.warn("⚠ ground_tile source image not ready");
+      return;
+    }
+
     const screenHeight = this.cameras.main.height;
     const screenWidth = this.cameras.main.width;
 
     const groundTopY = screenHeight * 0.8;
 
-    const groundTile = this.textures.get("ground_tile").getSourceImage();
+    // const groundTile = this.textures.get("ground_tile").getSourceImage();
     const groundHeight = groundTile.height;
 
     // TOP GROUND (collision)
@@ -188,15 +213,19 @@ class GameScene extends Phaser.Scene {
     this.ground?.update(delta);
     this.mud?.update(delta);
     this.enemyManager.update();
+
+    this.hudText.setText(
+      `Enemies Avoided: ${this.enemiesAvoided}\nExtra Jumps: ${this.extraJumps}`
+    );
   }
 
   endGame() {
     if (this.gameOver) return;
 
     this.gameOver = true;
-    const finalScore = 0; // this.scoreManager.getScore();
 
-    // Pass score to GameOverScene
-    this.scene.start("GameOverScene", { score: finalScore });
+    this.scene.start("GameOverScene", {
+      score: this.enemiesAvoided, // 🔥 REAL SCORE
+    });
   }
 }

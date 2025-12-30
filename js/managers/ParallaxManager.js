@@ -8,29 +8,40 @@ class ParallaxManager {
   }
 
   createLayers() {
+    // 🔐 Camera safety
+    if (!this.scene.cameras || !this.scene.cameras.main) {
+      console.warn("⚠ Camera not ready for parallax");
+      return;
+    }
+  
     const width = this.scene.cameras.main.width;
     const height = this.scene.cameras.main.height;
-
-    // Layer 1: Solid Sky (full screen, slowest)
+  
+    // 🔐 Texture safety
+    if (
+      !this.scene.textures.exists("bg_layer1") ||
+      !this.scene.textures.get("bg_layer1").source[0]
+    ) {
+      console.warn("⚠ Parallax textures not ready yet");
+      return;
+    }
+  
     this.createLayer({
       key: "bg_layer1",
       speed: GameConfig.Parallax.Layer_1_Speed,
       y: height / 2,
       depth: -100,
-      fillScreen: true, // Fill entire screen
+      fillScreen: true,
     });
-
-    // Layer 2: Clouds (full screen height, medium speed)
-    // Position at center so clouds fill the sky area
+  
     this.createLayer({
       key: "bg_layer2",
       speed: GameConfig.Parallax.Layer_2_Speed,
-      y: height / 2, // Center vertically to fill screen
-      depth: -15, // Between sky and hills
+      y: height / 2,
+      depth: -15,
       fillScreen: true,
     });
-
-    // Layer 3: Hills/Trees (mid to lower screen, fastest)
+  
     this.createLayer({
       key: "bg_layer3",
       speed: GameConfig.Parallax.Layer_3_Speed,
@@ -39,6 +50,7 @@ class ParallaxManager {
       fillScreen: true,
     });
   }
+  
   resize() {
     this.destroy();
     this.createLayers();

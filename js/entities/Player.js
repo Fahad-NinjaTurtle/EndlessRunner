@@ -29,8 +29,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     // Start running animation
     this.play("player_run");
     // 🔥 Double jump system
-    this.maxExtraJumps = 1; // kitne bonus jumps mil sakte hain
-    this.extraJumps = 0; // currently available bonus jumps
+    // this.maxExtraJumps = 1; // kitne bonus jumps mil sakte hain
+    // this.extraJumps = 0; // currently available bonus jumps
 
     // Set initial position - player's BOTTOM at ground level
     this.setPosition(x, this.groundY);
@@ -50,6 +50,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     // Get ground Y from scene (responsive to screen size)
     // If scene has groundY property, use it; otherwise use config
     this.groundY = this.scene.groundY || GameConfig.Ground.Y_Position;
+    this.hasDoubleJumped = false;
+
   }
 
   setupAnimations() {
@@ -62,30 +64,23 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
   jump() {
     const jumpForce = GameConfig.Player.Jump_Force;
-
+  
     // Ground jump
     if (this.isOnGround) {
-        this.body.setVelocityY(jumpForce);
-        this.isOnGround = false;
-        this.isJumping = true;
-        this.canJump = false;
-
-        if (this.scene.textures.exists('player_jump')) {
-            this.setTexture('player_jump');
-        }
-        return;
+      this.body.setVelocityY(jumpForce);
+      this.isOnGround = false;
+      this.hasDoubleJumped = false;
+      return;
     }
-
-    // 🔥 DOUBLE JUMP
-    if (this.extraJumps > 0) {
-        this.body.setVelocityY(jumpForce);
-        this.extraJumps--;
-
-        // optional feedback
-        this.setTint(0x00ff00);
-        this.scene.time.delayedCall(100, () => this.clearTint());
+  
+    // DOUBLE JUMP (Scene-owned)
+    if (!this.hasDoubleJumped && this.scene.extraJumps > 0) {
+      this.body.setVelocityY(jumpForce);
+      this.scene.extraJumps--;
+      this.hasDoubleJumped = true;
     }
-}
+  }
+  
 
   update() {
     // Check if player has landed
