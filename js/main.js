@@ -71,10 +71,13 @@ if (isMobileDevice()) {
 }
 
 
-document.addEventListener("fullscreenchange", () => {
+// Helper function to handle fullscreen changes
+function handleFullscreenChange() {
   const hud = document.getElementById("hud");
   const pauseBtn = document.getElementById("pauseBtn");
   const pauseOverlay = document.getElementById("pause-overlay");
+  const menuOverlay = document.getElementById("menu-overlay");
+  const gameOverOverlay = document.getElementById("gameover-overlay");
 
   const fsElement =
     document.fullscreenElement ||
@@ -83,17 +86,24 @@ document.addEventListener("fullscreenchange", () => {
   const container = document.getElementById("game-container");
 
   if (fsElement) {
-    // Entering fullscreen → move HUD, pause button, and pause overlay inside
-    if (hud) fsElement.appendChild(hud);
-    if (pauseBtn) fsElement.appendChild(pauseBtn);
-    if (pauseOverlay) fsElement.appendChild(pauseOverlay);
+    // Entering fullscreen → move all UI elements inside fullscreen element
+    if (hud && hud.parentNode !== fsElement) fsElement.appendChild(hud);
+    if (pauseBtn && pauseBtn.parentNode !== fsElement) fsElement.appendChild(pauseBtn);
+    if (pauseOverlay && pauseOverlay.parentNode !== fsElement) fsElement.appendChild(pauseOverlay);
+    if (menuOverlay && menuOverlay.parentNode !== fsElement) fsElement.appendChild(menuOverlay);
+    if (gameOverOverlay && gameOverOverlay.parentNode !== fsElement) fsElement.appendChild(gameOverOverlay);
   } else {
     // Exiting fullscreen → move everything back to game container
-    if (hud && container) container.appendChild(hud);
-    if (pauseBtn && container) container.appendChild(pauseBtn);
-    if (pauseOverlay && container) container.appendChild(pauseOverlay);
+    if (hud && container && hud.parentNode !== container) container.appendChild(hud);
+    if (pauseBtn && container && pauseBtn.parentNode !== container) container.appendChild(pauseBtn);
+    if (pauseOverlay && container && pauseOverlay.parentNode !== container) container.appendChild(pauseOverlay);
+    if (menuOverlay && container && menuOverlay.parentNode !== container) container.appendChild(menuOverlay);
+    if (gameOverOverlay && container && gameOverOverlay.parentNode !== container) container.appendChild(gameOverOverlay);
   }
-});
+}
+
+document.addEventListener("fullscreenchange", handleFullscreenChange);
+document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
 
 
 function scaleHudFromPixel7() {

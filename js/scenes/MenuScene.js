@@ -4,9 +4,20 @@ class MenuScene extends Phaser.Scene {
   }
 
   create() {
-    // Show menu overlay
+    // Show menu overlay and ensure it's in the correct container
     const menuOverlay = document.getElementById("menu-overlay");
     if (menuOverlay) {
+      // Ensure overlay is in the correct container (fullscreen or game-container)
+      const fsElement =
+        document.fullscreenElement ||
+        document.webkitFullscreenElement;
+      
+      const container = fsElement || document.getElementById("game-container");
+      
+      if (container && menuOverlay.parentNode !== container) {
+        container.appendChild(menuOverlay);
+      }
+      
       menuOverlay.classList.remove("hidden");
     }
 

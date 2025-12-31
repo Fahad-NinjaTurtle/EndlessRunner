@@ -104,15 +104,21 @@ class GameOverScene extends Phaser.Scene {
           gameOverOverlay.classList.add('hidden');
         }
       
-        // 🔥 FORCE menu overlay into fullscreen
+        // Ensure menu overlay is in the correct container
         const fsElement =
           document.fullscreenElement ||
-          document.webkitFullscreenElement ||
-          document.body;
-      
+          document.webkitFullscreenElement;
+        
+        const container = fsElement || document.getElementById('game-container');
         const menuOverlay = document.getElementById('menu-overlay');
-        fsElement.appendChild(menuOverlay);
-        menuOverlay.classList.remove('hidden');
+        
+        if (menuOverlay && container) {
+          // Only move if not already in the correct container
+          if (menuOverlay.parentNode !== container) {
+            container.appendChild(menuOverlay);
+          }
+          menuOverlay.classList.remove('hidden');
+        }
       
         this.scene.start('MenuScene');
       });
@@ -121,13 +127,19 @@ class GameOverScene extends Phaser.Scene {
 
     const overlay = document.getElementById("gameover-overlay");
 
-    // FORCE overlay into fullscreen element
+    // Ensure overlay is in the correct container (fullscreen or game-container)
     const fsElement =
       document.fullscreenElement ||
-      document.webkitFullscreenElement ||
-      document.body;
-
-    fsElement.appendChild(overlay);
-    overlay.classList.remove("hidden");
+      document.webkitFullscreenElement;
+    
+    const container = fsElement || document.getElementById("game-container");
+    
+    if (overlay && container) {
+      // Only move if not already in the correct container
+      if (overlay.parentNode !== container) {
+        container.appendChild(overlay);
+      }
+      overlay.classList.remove("hidden");
+    }
   }
 }
