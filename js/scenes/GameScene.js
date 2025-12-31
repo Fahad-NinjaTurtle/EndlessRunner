@@ -138,6 +138,7 @@ class GameScene extends Phaser.Scene {
     if (!gameSize) return;
 
     const { width, height } = gameSize;
+    const isMobile = !this.sys.game.device.os.desktop;
 
     // 1️⃣ Recalculate ground
     this.groundY = height * 0.8;
@@ -147,19 +148,27 @@ class GameScene extends Phaser.Scene {
       this.parallaxManager.resize();
     }
 
-    // 3️⃣ Resize ground
+    // 3️⃣ Resize ground - extend on mobile
     if (this.ground) {
+      const extraWidth = isMobile ? 400 : 0;
+      const groundWidth = width + extraWidth;
+      
       this.ground.setPosition(width / 2, this.groundY);
-      this.ground.displayWidth = width;
-      this.ground.body.setSize(width, this.ground.height);
+      this.ground.displayWidth = groundWidth;
+      this.ground.body.setSize(groundWidth, this.ground.height);
       this.ground.body.updateFromGameObject();
     }
 
-    // 4️⃣ Resize mud
+    // 4️⃣ Resize mud - extend width and height on mobile
     if (this.mud) {
+      const extraWidth = isMobile ? 400 : 0;
+      const extraMudHeight = isMobile ? 100 : 0;
+      const mudWidth = width + extraWidth;
+      const mudHeight = height - (this.groundY + this.ground.height) + extraMudHeight;
+      
       this.mud.setPosition(width / 2, this.groundY + this.ground.height);
-      this.mud.displayWidth = width;
-      this.mud.displayHeight = height - (this.groundY + this.ground.height);
+      this.mud.displayWidth = mudWidth;
+      this.mud.displayHeight = mudHeight;
     }
 
     // 5️⃣ Snap player
@@ -218,33 +227,37 @@ class GameScene extends Phaser.Scene {
       return;
     }
 
-    // const screenWidth = DESIGN_WIDTH;
-    // const screenHeight = DESIGN_HEIGHT;
-
     const screenWidth = this.cameras.main.width;
     const screenHeight = this.cameras.main.height;
+    const isMobile = !this.sys.game.device.os.desktop;
 
     const groundTopY = screenHeight * 0.8;
-
-    // const groundTile = this.textures.get("ground_tile").getSourceImage();
     const groundHeight = groundTile.height;
 
-    // TOP GROUND (collision)
+    // On mobile: extend ground width by 200 pixels on each side (400 total extra)
+    // On desktop: use normal width
+    const extraWidth = isMobile ? 400 : 0;
+    const groundWidth = screenWidth + extraWidth;
+
+    // TOP GROUND (collision) - extended on mobile
     this.ground = new Ground(
       this,
-      screenWidth / 2,
+      screenWidth / 2, // Center position stays the same
       groundTopY,
-      screenWidth,
+      groundWidth,
       groundHeight
     );
 
-    // MUD BELOW (fill till bottom)
+    // MUD BELOW - extended width on mobile, and extra height layer
+    const mudHeight = screenHeight - (groundTopY + groundHeight);
+    const extraMudHeight = isMobile ? 100 : 0; // Extra 100px below screen on mobile
+    
     this.mud = new MudFill(
       this,
-      screenWidth / 2,
+      screenWidth / 2, // Center position stays the same
       groundTopY + groundHeight,
-      screenWidth,
-      screenHeight - (groundTopY + groundHeight)
+      groundWidth,
+      mudHeight + extraMudHeight
     );
 
     this.groundY = groundTopY;
@@ -452,7 +465,7 @@ class GameScene extends Phaser.Scene {
     this.enemyManager.update();
 
     if (this.hudEnemiesEl) this.hudEnemiesEl.textContent = `Enemies Avoided: ${this.enemiesAvoided}`;
-    if (this.hudJumpsEl) this.hudJumpsEl.textContent = `Extra Jumps: ${this.extraJumps}`;
+    if (this.hudJumpsEl) this.hudJumpsEl.textContent = `Double Jumps: ${this.extraJumps}`;
     
   }
 

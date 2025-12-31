@@ -86,7 +86,7 @@ body {
   
   /* Text */
   .hud-row span {
-    font-size: 16px;      /* Pixel 7 base */
+    font-size: 10px;      /* Pixel 7 base */
     font-weight: 600;
     color: #000;
   }

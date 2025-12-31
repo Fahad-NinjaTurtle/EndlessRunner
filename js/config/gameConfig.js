@@ -5,16 +5,16 @@ const GameConfig = {
     Player:{
         Gravity: 1500,
         Jump_Force: -700,
-        Run_Speed: 200,
+        Run_Speed: 300,
         Start_X: 100,
         Start_Y: 400,
         Scale: 1,
     },
 
     Parallax:{
-        Layer_1_Speed: 100,
-        Layer_2_Speed: 200,
-        Layer_3_Speed: 300,
+        Layer_1_Speed: 30,      // Sky - slowest (farthest background)
+        Layer_2_Speed: 60,       // Clouds - medium speed
+        Layer_3_Speed: 150,      // Trees - fastest (closest background)
     },
 
     Obstacle:{
@@ -37,6 +37,7 @@ const GameConfig = {
     Ground:{
         Y_Position: 500,
         Height: 100,
+        Speed: 400,  // 3x the original speed (200 * 3)
     },
 
     Colors:{

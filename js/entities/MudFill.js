@@ -9,7 +9,7 @@ class MudFill extends Phaser.GameObjects.TileSprite {
     }
   
     update(delta) {
-      this.tilePositionX += GameConfig.Obstacle.Speed * (delta / 1000);
+      this.tilePositionX += GameConfig.Ground.Speed * (delta / 1000);
     }
   }
   

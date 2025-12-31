@@ -26,22 +26,25 @@ class ParallaxManager {
       return;
     }
   
+    // Layer 1: Sky (farthest, slowest) - Positioned 50% higher (at 25% of screen height)
     this.createLayer({
       key: "bg_layer1",
       speed: GameConfig.Parallax.Layer_1_Speed,
-      y: height / 2,
+      y: height * 0.25,
       depth: -100,
       fillScreen: true,
     });
-  
+
+    // Layer 2: Clouds (mid, medium speed) - Positioned 50% higher (at 25% of screen height)
     this.createLayer({
       key: "bg_layer2",
       speed: GameConfig.Parallax.Layer_2_Speed,
-      y: height / 2,
+      y: height * 0.25,
       depth: -15,
       fillScreen: true,
     });
-  
+
+    // Layer 3: Trees (closest, fastest) - Keep at center for ground-level view
     this.createLayer({
       key: "bg_layer3",
       speed: GameConfig.Parallax.Layer_3_Speed,
@@ -69,11 +72,20 @@ class ParallaxManager {
     const imageWidth = texture.source[0].width;
     const imageHeight = texture.source[0].height;
 
-    // Scale all layers to fill screen height for consistency
-    // This ensures clouds are tall enough to be visible
-    const scale = height / imageHeight;
+    // Scale layers based on their position
+    // Layers 1 and 2 (sky/clouds) at 25% height - scale to cover upper portion better
+    // Layer 3 (trees) at center - scale to fill screen height
+    let scale;
+    if (config.key === "bg_layer1" || config.key === "bg_layer2") {
+      // Scale to 150% of screen height for better visibility in upper portion
+      scale = (height * 1.5) / imageHeight;
+    } else {
+      // Layer 3: Scale to fill screen height
+      scale = height / imageHeight;
+    }
+    
     const scaledWidth = imageWidth * scale;
-    const scaledHeight = height;
+    const scaledHeight = imageHeight * scale;
     
     // Debug log for clouds to verify they're being created
     if (config.key === 'bg_layer2') {
