@@ -112,6 +112,14 @@ class PreloadScene extends Phaser.Scene {
     this.load.image("Slime_Spike_a","assets/images/Enemies/slime_spike_walk_a.png");
     this.load.image("Slime_Spike_b","assets/images/Enemies/slime_spike_walk_b.png");
 
+    // Props
+    this.load.image("rock", "assets/images/Props/Rock.webp");
+    this.load.image("log", "assets/images/Props/Log.png");
+    
+    // UI Elements
+    this.load.image("scorePanel", "assets/images/Score Panel.png");
+    this.load.image("meterRunIcon", "assets/images/Icons/meter run icon.png");
+    this.load.image("doubleJumpIcon", "assets/images/Icons/double jump icon.png");
 
     // sounds
     this.load.audio("jump", "assets/Sounds/sfx_jump.ogg");

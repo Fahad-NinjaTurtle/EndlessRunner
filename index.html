@@ -15,15 +15,15 @@
       <button id="pauseBtn" class="pause-btn hidden" aria-label="Pause Game">⏸</button>
       <!-- HUD (HTML) -->
       <div id="hud" class="hud">
-        <div class="hud-inner">
-          <div class="hud-row">
-            <!-- <img src="" class="hud-icon"> -->
-            <span id="hud-enemies">Enemies Avoided: 0</span>
+        <!-- Score Panel -->
+        <div class="score-panel">
+          <div class="score-panel-item">
+            <img src="assets/images/Icons/meter run icon.png" alt="Meters" class="score-icon" id="meter-icon">
+            <span id="hud-score" class="score-value">000000</span>
           </div>
-      
-          <div class="hud-row">
-            <!-- <img src="" class="hud-icon"> -->
-            <span id="hud-jumps">Extra Jumps: 0</span>
+          <div class="score-panel-item">
+            <img src="assets/images/Icons/double jump icon.png" alt="Double Jumps" class="score-icon" id="jump-icon">
+            <span id="hud-jumps" class="score-value">000</span>
           </div>
         </div>
       </div>
@@ -34,6 +34,7 @@
         <div class="menu-content">
           <h1 class="game-title">Endless Runner</h1>
           <p class="instructions">Tap or Click to Jump!</p>
+          <p class="instructions-small">Crossing 4 enemies grants a double jump!</p>
           <button id="start-btn" class="btn btn-primary">START</button>
           <div id="high-score-menu" class="high-score"></div>
         </div>
@@ -80,6 +81,7 @@
     <script src="js/scenes/GameOverScene.js"></script>
     <script src="js/entities/Enemy.js"></script>
     <script src="js/managers/EnemyManager.js"></script>
+    <script src="js/managers/PropsManager.js"></script>
     <script src="js/config/EnemyConfig.js"></script>
 
     <!-- Main Game File -->

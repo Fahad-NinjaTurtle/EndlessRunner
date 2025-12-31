@@ -13,8 +13,11 @@ class Ground extends Phaser.GameObjects.TileSprite {
       this.body.immovable = true;
     }
   
-    update(delta) {
-      this.tilePositionX += GameConfig.Ground.Speed * (delta / 1000);
+    update(delta, speed) {
+      // Move ground left to right (negative direction for scrolling effect)
+      // Speed is passed from GameScene to allow dynamic speed increase
+      const groundSpeed = speed || GameConfig.Ground.Speed;
+      this.tilePositionX += groundSpeed * (delta / 1000);
     }
   }
   

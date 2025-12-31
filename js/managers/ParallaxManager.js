@@ -39,7 +39,7 @@ class ParallaxManager {
     this.createLayer({
       key: "bg_layer2",
       speed: GameConfig.Parallax.Layer_2_Speed,
-      y: height * 0.25,
+      y: height * 0.1,
       depth: -15,
       fillScreen: true,
     });
@@ -48,7 +48,7 @@ class ParallaxManager {
     this.createLayer({
       key: "bg_layer3",
       speed: GameConfig.Parallax.Layer_3_Speed,
-      y: height / 2,
+      y: height * 0.7,
       depth: -10,
       fillScreen: true,
     });

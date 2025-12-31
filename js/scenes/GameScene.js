@@ -7,7 +7,7 @@ class GameScene extends Phaser.Scene {
 
         // HTML HUD refs
         this.hudEl = document.getElementById("hud");
-        this.hudEnemiesEl = document.getElementById("hud-enemies");
+        this.hudScoreEl = document.getElementById("hud-score");
         this.hudJumpsEl = document.getElementById("hud-jumps");
     
         // show HUD during gameplay
@@ -30,6 +30,13 @@ class GameScene extends Phaser.Scene {
     // Initialize game state
     this.gameOver = false;
     this.gameSpeed = 1; // Base speed multiplier
+    this.groundSpeed = GameConfig.Ground.Speed; // Current ground speed
+    this.gameTime = 0; // Track game time for speed increase
+    this.speedIncreaseInterval = 10000; // Increase speed every 10 seconds
+    this.speedIncreaseAmount = 50; // Increase by 50 pixels/second
+    this.metersRun = 0; // Distance in meters
+    this.pixelsPerMeter = 100; // Conversion: 100 pixels = 1 meter
+    this.enemiesAvoided = 0; // Track enemies avoided for double jump rewards
 
     // Create parallax background FIRST (so it renders behind everything)
     this.parallaxManager = new ParallaxManager(this);
@@ -43,10 +50,16 @@ class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.ground);
 
     this.setupInput();
-    this.enemiesAvoided = 0;
-    this.enemiesForDoubleJump = 4;
 
     this.enemyManager = new EnemyManager(this);
+    
+    // Create props manager AFTER ground is created (so groundY is available)
+    // try {
+    //   this.propsManager = new PropsManager(this);
+    // } catch (error) {
+    //   console.error("Error creating PropsManager:", error);
+    //   this.propsManager = null; // Continue without props if there's an error
+    // }
 
     // Collision → GAME OVER
     this.physics.add.collider(
@@ -56,8 +69,16 @@ class GameScene extends Phaser.Scene {
       null,
       this
     );
+    
+    // Props are decorative only - NO collision with player
+    // Removed collision detection for props
 
-    this.physics.add.collider(this.enemyManager.enemies, this.ground);
+    // Only ground enemies collide with ground - flying enemies don't need collision
+    // The collider is set up but flying enemies have no gravity, so they won't be affected
+    this.physics.add.collider(this.enemyManager.enemies, this.ground, null, (enemy, ground) => {
+      // Only allow collision for ground enemies, not flying ones
+      return enemy.enemyType !== 'flying';
+    });
 
     this.scale.on("resize", () => {
       // this.createGround();
@@ -66,8 +87,9 @@ class GameScene extends Phaser.Scene {
 
     this.scale.on("resize", this.handleResize, this);
 
-    this.enemiesAvoided = 0;
+    this.metersRun = 0;
     this.extraJumps = 0;
+    this.enemiesAvoided = 0;
     this.enemiesForDoubleJump = 4;
 
     // Setup pause functionality
@@ -200,7 +222,7 @@ class GameScene extends Phaser.Scene {
   }
   onEnemyAvoided() {
     this.enemiesAvoided++;
-
+    // Grant double jump every 4 enemies avoided
     if (this.enemiesAvoided % this.enemiesForDoubleJump === 0) {
       this.extraJumps++;
     }
@@ -457,15 +479,43 @@ class GameScene extends Phaser.Scene {
     if (this.gameOver) return;
     if (this.scene.isPaused()) return; // Don't update when paused
 
+    // Increase ground speed over time
+    this.gameTime += delta;
+    if (this.gameTime >= this.speedIncreaseInterval) {
+      this.groundSpeed += this.speedIncreaseAmount;
+      this.gameTime = 0; // Reset timer
+      console.log(`Ground speed increased to: ${this.groundSpeed}`);
+    }
+
+    // Calculate meters run based on ground speed and time
+    // Distance = speed * time, convert pixels to meters
+    const distanceInPixels = this.groundSpeed * (delta / 1000);
+    const distanceInMeters = distanceInPixels / this.pixelsPerMeter;
+    this.metersRun += distanceInMeters;
+
     this.parallaxManager?.update(delta);
     this.player?.update();
 
-    this.ground?.update(delta);
-    this.mud?.update(delta);
+    // Update ground and mud with current speed
+    this.ground?.update(delta, this.groundSpeed);
+    this.mud?.update(delta, this.groundSpeed);
+    
+    // Update enemies and props (they move with ground speed)
     this.enemyManager.update();
+    if (this.propsManager) {
+      this.propsManager.update(this.groundSpeed);
+    }
 
-    if (this.hudEnemiesEl) this.hudEnemiesEl.textContent = `Enemies Avoided: ${this.enemiesAvoided}`;
-    if (this.hudJumpsEl) this.hudJumpsEl.textContent = `Double Jumps: ${this.extraJumps}`;
+    // Update HUD with formatted score and double jumps
+    if (this.hudScoreEl) {
+      const meters = Math.floor(this.metersRun);
+      // Format as 6-digit number with leading zeros (e.g., "001071")
+      this.hudScoreEl.textContent = String(meters).padStart(6, '0');
+    }
+    if (this.hudJumpsEl) {
+      // Format as 3-digit number with leading zeros (e.g., "000", "001", "010")
+      this.hudJumpsEl.textContent = String(this.extraJumps).padStart(3, '0');
+    }
     
   }
 
@@ -487,7 +537,7 @@ class GameScene extends Phaser.Scene {
     }
     
     this.scene.start("GameOverScene", {
-      score: this.enemiesAvoided, // 🔥 REAL SCORE
+      score: Math.floor(this.metersRun), // 🔥 REAL SCORE (meters run)
     });
   }
 }

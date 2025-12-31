@@ -37,7 +37,7 @@ const GameConfig = {
     Ground:{
         Y_Position: 500,
         Height: 100,
-        Speed: 400,  // 3x the original speed (200 * 3)
+        Speed: 300,  // 3x the original speed (200 * 3)
     },
 
     Colors:{

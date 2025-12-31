@@ -15,13 +15,13 @@ const EnemyConfig = {
       key: 'bee_a',
       type: 'flying',
       speed: 250,
-      yOffset: 0
+      yOffset: -120  // Bee flies 80 pixels above ground
     },
     fly: {
       key: 'fly_a',
       type: 'flying',
       speed: 280,
-      yOffset: 0
+      yOffset: -120  // Fly also in the air, slightly lower than bee
     },
     saw: {
       key: 'saw_a',

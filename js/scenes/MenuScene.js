@@ -54,7 +54,7 @@ class MenuScene extends Phaser.Scene {
     const highScore = localStorage.getItem("endlessRunnerHighScore") || 0;
 
     if (highScore > 0 && highScoreElement) {
-      highScoreElement.textContent = `High Score: ${highScore}`;
+      highScoreElement.textContent = `Best Distance: ${highScore}m`;
       highScoreElement.style.display = "block";
     } else if (highScoreElement) {
       highScoreElement.style.display = "none";

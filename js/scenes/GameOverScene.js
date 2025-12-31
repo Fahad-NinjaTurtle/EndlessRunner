@@ -47,7 +47,7 @@ class GameOverScene extends Phaser.Scene {
     // Update final score
     const finalScoreElement = document.getElementById("final-score");
     if (finalScoreElement) {
-      finalScoreElement.textContent = `Score: ${this.finalScore}`;
+      finalScoreElement.textContent = `Distance: ${this.finalScore}m`;
     }
 
     // Check and update high score
@@ -65,7 +65,7 @@ class GameOverScene extends Phaser.Scene {
     const highScoreElement = document.getElementById("high-score-display");
     if (highScoreElement) {
       const displayScore = newHighScore ? this.finalScore : highScore;
-      highScoreElement.textContent = `High Score: ${displayScore}${
+      highScoreElement.textContent = `Best Distance: ${displayScore}m${
         newHighScore ? " 🎉 NEW!" : ""
       }`;
       highScoreElement.className = newHighScore

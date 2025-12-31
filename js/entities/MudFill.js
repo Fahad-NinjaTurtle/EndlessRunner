@@ -8,8 +8,10 @@ class MudFill extends Phaser.GameObjects.TileSprite {
       this.setDepth(0); // behind ground
     }
   
-    update(delta) {
-      this.tilePositionX += GameConfig.Ground.Speed * (delta / 1000);
+    update(delta, speed) {
+      // Move mud with ground speed
+      const groundSpeed = speed || GameConfig.Ground.Speed;
+      this.tilePositionX += groundSpeed * (delta / 1000);
     }
   }
   

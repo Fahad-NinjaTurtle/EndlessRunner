@@ -64,39 +64,100 @@ body {
   } */
 
   /* HUD base */
-.hud {
+  /* .hud {
     position: absolute;
     top: 12px;
     left: 12px;
     z-index: 1000;
     pointer-events: none;
+  } */
+  
+  /* Score Panel Container */
+  .score-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* ⬅️ pehle 8px tha */
   }
   
-  /* This is what we scale */
-  .hud-inner {
+  /* Individual Score Panel Item */
+  .score-panel-item {
+    display: inline-flex;
+    align-items: center;
+  
+    background: linear-gradient(135deg, #3a4a5a, #2a3540);
+    border-radius: 10px;
+  
+    height: 44px;                 /* 🔥 bar height */
+    padding: 0 14px 0 6px;        /* 🔥 left tight */
+  
+    box-shadow:
+      0 2px 6px rgba(0,0,0,0.5),
+      inset 0 1px rgba(255,255,255,0.15);
+  
+    border: 1px solid rgba(255,255,255,0.15);
+  
+    width: fit-content;
+    min-width: unset;
+    max-width: unset;
+  
+    overflow: visible;            /* 🔥 icon bahar niklega */
+  }
+  
+  
+  /* Score Icon (Images for score and jumps) */
+  .score-icon {
+    height: 70px;        /* ⬆️ thora aur bara */
+    margin-left: -8px;
+    margin-top: -12px;
+    margin-bottom: -12px;
+    flex-shrink: 0;
+  }
+  
+  
+  /* Score Value (numbers) */
+  .score-value {
+    font-size: 20px;
+    line-height: 1;
+    padding-left: 6px;
+    letter-spacing: 2px;
+    min-width: auto;
+  }
+  
+  .score-value {
+    color: #ffffff; /* pure white */
+    text-shadow: 
+      0 1px 3px rgba(0, 0, 0, 0.9);
+  }
+  /* 📱 Mobile HUD scaling */
+@media (max-width: 768px) {
+  .hud {
+    transform: scale(0.6);
     transform-origin: top left;
   }
-  
-  /* Layout */
-  .hud-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 6px;
+}
+
+@media (max-width: 480px) {
+  .hud {
+    transform: scale(0.5);
+    transform-origin: top left;
+  }
+}
+
+  /* Mobile: Much smaller panels using transform
+  @media screen and (max-width: 768px) {
+    .hud .score-panel {
+      transform: scale(0.35) !important;
+      transform-origin: top left;
+    }
   }
   
-  /* Text */
-  .hud-row span {
-    font-size: 10px;      /* Pixel 7 base */
-    font-weight: 600;
-    color: #000;
-  }
-  
-  /* Icons */
-  .hud-icon {
-    width: 18px;          /* Pixel 7 base */
-    height: 18px;
-    margin-right: 6px;
-  }
+  /* Extra small mobile devices - even smaller */
+  /* @media screen and (max-width: 480px) {
+    .hud .score-panel {
+      transform: scale(0.3) !important;
+      transform-origin: top left;
+    }
+  }  */
   
   #ui-root {
     position: absolute;
@@ -228,7 +289,14 @@ body {
 .instructions {
   font-size: clamp(16px, 4vw, 24px);
   color: #cccccc;
+  margin-bottom: 20px;
+}
+
+.instructions-small {
+  font-size: clamp(14px, 3.5vw, 20px);
+  color: #ffd700;
   margin-bottom: 40px;
+  font-style: italic;
 }
 
 .game-over-title {
