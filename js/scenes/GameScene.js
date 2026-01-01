@@ -4,14 +4,25 @@ class GameScene extends Phaser.Scene {
   }
 
   create() {
+    // HTML HUD refs
+    this.hudEl = document.getElementById("hud");
+    this.hudScoreEl = document.getElementById("hud-score");
+    this.hudJumpsEl = document.getElementById("hud-jumps");
 
-        // HTML HUD refs
-        this.hudEl = document.getElementById("hud");
-        this.hudScoreEl = document.getElementById("hud-score");
-        this.hudJumpsEl = document.getElementById("hud-jumps");
+    // show HUD during gameplay
+    this.hudEl?.classList.remove("hidden");
+
+    // Double jump progress system
+    this.enemiesForDoubleJump = 4;
+    this.enemiesAvoided = 0;
+    this.extraJumps = 0;
+
+    // HTML refs
+    this.jumpBarFill = document.getElementById("jump-bar-fill");
+    this.jumpCountEl = document.getElementById("jump-count");
     
-        // show HUD during gameplay
-        this.hudEl?.classList.remove("hidden");
+    
+
     // Hide all overlays when game starts
     const menuOverlay = document.getElementById("menu-overlay");
     const gameOverOverlay = document.getElementById("gameover-overlay");
@@ -52,7 +63,7 @@ class GameScene extends Phaser.Scene {
     this.setupInput();
 
     this.enemyManager = new EnemyManager(this);
-    
+
     // Create props manager AFTER ground is created (so groundY is available)
     // try {
     //   this.propsManager = new PropsManager(this);
@@ -69,21 +80,25 @@ class GameScene extends Phaser.Scene {
       null,
       this
     );
-    
+
     // Props are decorative only - NO collision with player
     // Removed collision detection for props
 
     // Only ground enemies collide with ground - flying enemies don't need collision
     // The collider is set up but flying enemies have no gravity, so they won't be affected
-    this.physics.add.collider(this.enemyManager.enemies, this.ground, null, (enemy, ground) => {
-      // Only allow collision for ground enemies, not flying ones
-      return enemy.enemyType !== 'flying';
-    });
+    this.physics.add.collider(
+      this.enemyManager.enemies,
+      this.ground,
+      null,
+      (enemy, ground) => {
+        // Only allow collision for ground enemies, not flying ones
+        return enemy.enemyType !== "flying";
+      }
+    );
 
     this.scale.on("resize", () => {
       // this.createGround();
     });
-
 
     this.scale.on("resize", this.handleResize, this);
 
@@ -103,12 +118,12 @@ class GameScene extends Phaser.Scene {
       this.ensurePauseButtonPosition();
     });
 
-    this.bgMusic = this.sound.add("bg_music",{
+    this.bgMusic = this.sound.add("bg_music", {
       loop: true,
       volume: 0.5,
     });
 
-    if(!this.bgMusic.isPlaying) {
+    if (!this.bgMusic.isPlaying) {
       this.bgMusic.play();
     }
 
@@ -174,7 +189,7 @@ class GameScene extends Phaser.Scene {
     if (this.ground) {
       const extraWidth = isMobile ? 400 : 0;
       const groundWidth = width + extraWidth;
-      
+
       this.ground.setPosition(width / 2, this.groundY);
       this.ground.displayWidth = groundWidth;
       this.ground.body.setSize(groundWidth, this.ground.height);
@@ -186,8 +201,9 @@ class GameScene extends Phaser.Scene {
       const extraWidth = isMobile ? 400 : 0;
       const extraMudHeight = isMobile ? 100 : 0;
       const mudWidth = width + extraWidth;
-      const mudHeight = height - (this.groundY + this.ground.height) + extraMudHeight;
-      
+      const mudHeight =
+        height - (this.groundY + this.ground.height) + extraMudHeight;
+
       this.mud.setPosition(width / 2, this.groundY + this.ground.height);
       this.mud.displayWidth = mudWidth;
       this.mud.displayHeight = mudHeight;
@@ -222,11 +238,39 @@ class GameScene extends Phaser.Scene {
   }
   onEnemyAvoided() {
     this.enemiesAvoided++;
-    // Grant double jump every 4 enemies avoided
-    if (this.enemiesAvoided % this.enemiesForDoubleJump === 0) {
-      this.extraJumps++;
+  
+    const progress =
+      (this.enemiesAvoided / this.enemiesForDoubleJump) * 100;
+  
+    // 1️⃣ Always update bar first
+    if (this.jumpBarFill) {
+      this.jumpBarFill.style.width = `${progress}%`;
+    }
+  
+    // 2️⃣ If bar is full
+    if (this.enemiesAvoided >= this.enemiesForDoubleJump) {
+  
+      // ⏳ Allow browser to render FULL bar
+      setTimeout(() => {
+        this.enemiesAvoided = 0;
+        this.extraJumps++;
+  
+        // Reset bar
+        if (this.jumpBarFill) {
+          this.jumpBarFill.style.width = "0%";
+        }
+  
+        // Update badge
+        if (this.jumpCountEl) {
+          this.jumpCountEl.textContent = `x${this.extraJumps}`;
+        }
+  
+        // Optional feedback
+        // this.sound.play("powerup");
+      }, 120); // 🔥 100–150ms is perfect
     }
   }
+  
 
   // grantDoubleJump() {
   //   this.player.extraJumps = this.player.maxExtraJumps;
@@ -273,7 +317,7 @@ class GameScene extends Phaser.Scene {
     // MUD BELOW - extended width on mobile, and extra height layer
     const mudHeight = screenHeight - (groundTopY + groundHeight);
     const extraMudHeight = isMobile ? 100 : 0; // Extra 100px below screen on mobile
-    
+
     this.mud = new MudFill(
       this,
       screenWidth / 2, // Center position stays the same
@@ -338,7 +382,10 @@ class GameScene extends Phaser.Scene {
     // Pause menu button handler
     if (this.pauseMenuBtn) {
       const newPauseMenuBtn = this.pauseMenuBtn.cloneNode(true);
-      this.pauseMenuBtn.parentNode.replaceChild(newPauseMenuBtn, this.pauseMenuBtn);
+      this.pauseMenuBtn.parentNode.replaceChild(
+        newPauseMenuBtn,
+        this.pauseMenuBtn
+      );
       this.pauseMenuBtn = newPauseMenuBtn;
 
       newPauseMenuBtn.addEventListener("click", () => {
@@ -358,10 +405,10 @@ class GameScene extends Phaser.Scene {
 
   pauseGame() {
     if (this.gameOver) return;
-    
+
     this.scene.pause();
     this.showPauseOverlay();
-    
+
     // Pause background music
     if (this.bgMusic && this.bgMusic.isPlaying) {
       this.bgMusic.pause();
@@ -395,7 +442,7 @@ class GameScene extends Phaser.Scene {
       // Countdown complete - resume game
       this.hidePauseOverlay();
       this.scene.resume();
-      
+
       // Resume background music
       if (this.bgMusic && !this.bgMusic.isPlaying) {
         this.bgMusic.resume();
@@ -441,11 +488,10 @@ class GameScene extends Phaser.Scene {
   ensurePauseButtonPosition() {
     // Make sure pause button and overlay are in the correct container (fullscreen or game-container)
     const fsElement =
-      document.fullscreenElement ||
-      document.webkitFullscreenElement;
-    
+      document.fullscreenElement || document.webkitFullscreenElement;
+
     const container = fsElement || document.getElementById("game-container");
-    
+
     if (container) {
       if (this.pauseBtn && this.pauseBtn.parentNode !== container) {
         container.appendChild(this.pauseBtn);
@@ -499,7 +545,7 @@ class GameScene extends Phaser.Scene {
     // Update ground and mud with current speed
     this.ground?.update(delta, this.groundSpeed);
     this.mud?.update(delta, this.groundSpeed);
-    
+
     // Update enemies and props (they move with ground speed)
     this.enemyManager.update();
     if (this.propsManager) {
@@ -510,34 +556,59 @@ class GameScene extends Phaser.Scene {
     if (this.hudScoreEl) {
       const meters = Math.floor(this.metersRun);
       // Format as 6-digit number with leading zeros (e.g., "001071")
-      this.hudScoreEl.textContent = String(meters).padStart(6, '0');
+      this.hudScoreEl.textContent =
+      `${String(meters)} m`;
+    
+
     }
     if (this.hudJumpsEl) {
       // Format as 3-digit number with leading zeros (e.g., "000", "001", "010")
-      this.hudJumpsEl.textContent = String(this.extraJumps).padStart(3, '0');
+      this.hudJumpsEl.textContent = String(this.extraJumps).padStart(3, "0");
     }
-    
   }
 
   endGame() {
     if (this.gameOver) return;
 
     this.gameOver = true;
-    
+
     // Hide pause button
     if (this.pauseBtn) {
       this.pauseBtn.classList.add("hidden");
     }
-    
+
     // Hide pause overlay if visible
     this.hidePauseOverlay();
-    
+
     if (this.bgMusic) {
       this.bgMusic.stop();
     }
-    
+    if (this.jumpBarFill) {
+      this.jumpBarFill.style.width = "0%";
+    }
+  
+    if (this.jumpCountEl) {
+      this.jumpCountEl.textContent = "x0";
+    }
     this.scene.start("GameOverScene", {
       score: Math.floor(this.metersRun), // 🔥 REAL SCORE (meters run)
     });
   }
+
+  consumeDoubleJump() {
+    if (this.extraJumps <= 0) return;
+  
+    this.extraJumps--;
+  
+    // 🔥 Update badge
+    if (this.jumpCountEl) {
+      this.jumpCountEl.textContent = `x${this.extraJumps}`;
+    }
+  
+    // 🔥 Optional: slight visual feedback
+    // if (this.jumpBarFill) {
+    //   this.jumpBarFill.style.width = "0%";
+    // }
+  }
+  
 }

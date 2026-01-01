@@ -6,7 +6,6 @@ A modern, responsive endless runner game built with Phaser 3. Jump over enemies,
 
 **[Play the Game Here](https://fahad-ninjaturtle.github.io/EndlessRunner/)** 
 
-> **Note:** Update the link above with your actual hosted URL (GitHub Pages, Netlify, Vercel, etc.)
 
 ## ✨ Features
 
@@ -228,7 +227,7 @@ This project is open source and available for educational purposes.
 ## 👨‍💻 Author
 
 **Your Name**
-- GitHub: [@your-username](https://github.com/your-username)
+- GitHub: [Fahad](https://github.com/)
 
 ## 🙏 Acknowledgments
 

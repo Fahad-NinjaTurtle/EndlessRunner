@@ -78,7 +78,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     // DOUBLE JUMP (Scene-owned)
     if (!this.hasDoubleJumped && this.scene.extraJumps > 0) {
       this.body.setVelocityY(jumpForce);
-      this.scene.extraJumps--;
+      this.scene.consumeDoubleJump(); // 🔥 IMPORTANT
       this.hasDoubleJumped = true;
       this.isJumping = true; // ✅ FIX
       this.scene.sound.play("double_jump", { volume: 0.8 });
@@ -115,7 +115,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.isJumping = false;
         this.canJump = true;
         // 🔥 RESET DOUBLE JUMP ON LAND
-        this.extraJumps = this.maxExtraJumps;
+        // this.extraJumps = this.maxExtraJumps;
         
         // Reset to running animation
         if (this.scene.anims.exists("player_run")) {

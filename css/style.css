@@ -73,22 +73,22 @@ body {
   } */
   
   /* Score Panel Container */
-  .score-panel {
+  /* .score-panel {
     display: flex;
     flex-direction: column;
-    gap: 25px; /* ⬅️ pehle 8px tha */
-  }
+    gap: 25px; 
+  } */
   
   /* Individual Score Panel Item */
-  .score-panel-item {
+  /* .score-panel-item {
     display: inline-flex;
     align-items: center;
   
     background: linear-gradient(135deg, #3a4a5a, #2a3540);
     border-radius: 10px;
   
-    height: 44px;                 /* 🔥 bar height */
-    padding: 0 14px 0 6px;        /* 🔥 left tight */
+    height: 44px;                 
+    padding: 0 14px 0 6px;       
   
     box-shadow:
       0 2px 6px rgba(0,0,0,0.5),
@@ -100,34 +100,34 @@ body {
     min-width: unset;
     max-width: unset;
   
-    overflow: visible;            /* 🔥 icon bahar niklega */
+    overflow: visible;           
   }
   
-  
+   */
   /* Score Icon (Images for score and jumps) */
-  .score-icon {
-    height: 70px;        /* ⬆️ thora aur bara */
+  /* .score-icon {
+    height: 70px;       
     margin-left: -8px;
     margin-top: -12px;
     margin-bottom: -12px;
     flex-shrink: 0;
-  }
+  } */
   
   
   /* Score Value (numbers) */
-  .score-value {
+  /* .score-value {
     font-size: 20px;
     line-height: 1;
     padding-left: 6px;
     letter-spacing: 2px;
     min-width: auto;
-  }
+  } */
   
-  .score-value {
-    color: #ffffff; /* pure white */
+  /* .score-value {
+    color: #ffffff; 
     text-shadow: 
       0 1px 3px rgba(0, 0, 0, 0.9);
-  }
+  } */
   /* 📱 Mobile HUD scaling */
 @media (max-width: 768px) {
   .hud {
@@ -467,4 +467,180 @@ body {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+}
+/* ===== CLEAN HUD LAYOUT ===== */
+
+.hud {
+  position: absolute;
+  inset: 0;
+  z-index: 2000;
+  pointer-events: none;
+  font-family: Arial, system-ui, sans-serif;
+  font-weight: 700;
+}
+
+/* Shared icon + text */
+.hud-icon {
+  height: 42px;
+  margin-right: 6px;
+}
+
+.hud-value {
+  font-size: 20px;
+  color: #000000;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* Jump → top left */
+.hud-jump {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+
+  display: flex;
+  align-items: center;
+}
+
+/* Score → top center */
+.hud-score {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+}
+
+/* Mobile scaling */
+@media (max-width: 768px) {
+  .hud {
+    transform: scale(0.85);
+    transform-origin: top left;
+  }
+}
+
+@media (max-width: 480px) {
+  .hud {
+    transform: scale(0.75);
+  }
+}
+
+
+/* ===== Double Jump XP Bar ===== */
+
+.jump-progress {
+  position: absolute;
+  top: 60px;
+  left: 14px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.jump-bar {
+  width: 90px;
+  height: 8px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+#jump-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+  border-radius: 6px;
+  transition: width 0.25s ease;
+}
+
+.jump-count {
+  font-size: 14px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}/* ===== Double Jump Power (Subway Style) ===== */
+/* ===== Double Jump Power (Refined Subway Style) ===== */
+
+.jump-power {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+}
+
+/* Core container */
+.jump-core {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Square tile */
+.jump-tile {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+
+  background: linear-gradient(135deg, #3a4a5a, #2a3540);
+  box-shadow:
+    0 3px 6px rgba(0,0,0,0.6),
+    inset 0 1px rgba(255,255,255,0.15);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 2;
+}
+
+/* Jump icon */
+.jump-tile-icon {
+  width: 26px;
+  height: 26px;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.7));
+}
+
+/* Progress bar – ATTACHED to square */
+.jump-bar {
+  margin-left: -4px;
+  width: 90px;
+  height: 28px;   /* ✅ 2x height */
+  background: rgba(255,255,255,0.25);
+  border-radius: 0 10px 10px 0; /* optional: thori smooth */
+  overflow: hidden;
+}
+
+
+#jump-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(
+    90deg,
+    #4caf50,
+    #8bc34a
+  );
+  transition: width 0.25s ease;
+}
+
+/* Count badge – circle-style (like previous ring version) */
+.jump-count {
+  position: absolute;
+  bottom: -6px;
+right: -10px;
+
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+
+  background: #ff9800;
+  color: #000;
+  font-size: 12px;
+  font-weight: 800;
+
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
 }

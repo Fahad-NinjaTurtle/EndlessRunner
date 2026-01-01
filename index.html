@@ -15,16 +15,27 @@
       <button id="pauseBtn" class="pause-btn hidden" aria-label="Pause Game">⏸</button>
       <!-- HUD (HTML) -->
       <div id="hud" class="hud">
-        <!-- Score Panel -->
-        <div class="score-panel">
-          <div class="score-panel-item">
-            <img src="assets/images/Icons/meter run icon.png" alt="Meters" class="score-icon" id="meter-icon">
-            <span id="hud-score" class="score-value">000000</span>
-          </div>
-          <div class="score-panel-item">
-            <img src="assets/images/Icons/double jump icon.png" alt="Double Jumps" class="score-icon" id="jump-icon">
-            <span id="hud-jumps" class="score-value">000</span>
-          </div>
+        <!-- Jump (top-left) -->
+<!-- Double Jump Power (Subway Style) -->
+<div class="jump-power">
+  <div class="jump-core">
+    <div class="jump-tile">
+      <img src="assets/images/Icons/jump.png" class="jump-tile-icon">
+    </div>
+
+    <div class="jump-bar">
+      <div id="jump-bar-fill"></div>
+    </div>
+
+    <!-- count badge (circle-style) -->
+    <div id="jump-count" class="jump-count">x0</div>
+  </div>
+</div>
+
+        <!-- Score (top-center) -->
+        <div class="hud-score">
+          <!-- <img src="assets/images/Icons/score.png" class="hud-icon"> -->
+          <span id="hud-score" class="hud-value">000000</span>
         </div>
       </div>
       
